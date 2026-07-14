@@ -7,10 +7,14 @@
 - `lesson1.html` — 앱 전체 (단일 자체완결 HTML, 인라인 CSS/JS/SVG). **유일한 소스.**
 - `마우스배우기.html` — 폐기된 옛 버전. 수정하지 말 것 (참고용).
 
-## 배포 (중요)
+## 저장소·배포 (중요)
 
-- 학생 접속 주소(Artifact): **https://claude.ai/code/artifact/c25ca8eb-fbd2-4ba9-938a-86858f291d6a**
-- 수정 후 재게시 절차: `lesson1.html`에서 `<!doctype html>`, `<html>`, `<head>`, `<meta>`, `<body>` 계열 래퍼 태그 줄만 제거한 사본을 만들어 Artifact 도구로 게시. **반드시 `url` 파라미터에 위 주소를 넘겨 같은 주소를 유지할 것** (새 대화에서는 url 없이 게시하면 새 주소가 생김).
+- GitHub: **https://github.com/HYUNMINJU/digitalbasic** (main 브랜치)
+- 학생 접속 주소(GitHub Pages, 기본): **https://hyunminju.github.io/digitalbasic/**
+  - 배포 방법: main에 커밋 후 push하면 자동 배포 (1분 내외). `index.html`은 lesson1.html로 리다이렉트.
+- 보조 주소(Artifact): https://claude.ai/code/artifact/c25ca8eb-fbd2-4ba9-938a-86858f291d6a
+  - 재게시 시: lesson1.html에서 `<!doctype html>`/`<html>`/`<head>`/`<meta>`/`<body>` 계열 래퍼 태그 줄만 제거한 사본을 Artifact 도구로 게시하되, **반드시 `url` 파라미터에 위 주소를 넘겨 같은 주소 유지**.
+- 수정 완료 시 커밋·push까지 해야 학생 주소에 반영됨.
 
 ## 코딩 규칙
 
