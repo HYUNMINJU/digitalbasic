@@ -1,0 +1,15 @@
+# bkit/도구 상태 파일
+.bkit/
+.claude/
+.playwright-mcp/
+docs/
+
+# 폐기된 옛 자료
+마우스배우기.html
+*.svg
+마우스.jpg
+커서.png
+split-1920.png
+
+# 임시 파일
+*.jpeg

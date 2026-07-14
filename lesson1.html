@@ -1,0 +1,913 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>디지털 기초 1차시 — 컴퓨터와 친해지기</title>
+<style>
+:root{
+  --bg:#F4F6FA; --ink:#191F28; --sub:#6B7684; --card:#FFFFFF;
+  --accent:#3182F6; --accent-deep:#1B64DA; --accent-soft:#EBF3FF;
+  --green:#0BA360; --green-soft:#E6F6EC; --sun:#FFC342;
+  --hair:rgba(25,31,40,.07);
+  --shadow-sm:0 1px 3px rgba(25,31,40,.05), 0 4px 14px rgba(25,31,40,.06);
+  --shadow-md:0 2px 6px rgba(25,31,40,.05), 0 14px 34px rgba(25,31,40,.10);
+  color-scheme: light;
+}
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+html,body{margin:0; height:100%;}
+body{
+  font-family:"Pretendard Variable",Pretendard,"Malgun Gothic","맑은 고딕","Apple SD Gothic Neo","Noto Sans KR",sans-serif;
+  background:var(--bg); color:var(--ink);
+  display:flex; flex-direction:column;
+  min-height:100vh; min-height:100dvh;
+  touch-action:manipulation;
+  -webkit-user-select:none; user-select:none;
+}
+button{font:inherit; color:inherit; cursor:pointer; border:none; background:none;}
+button:focus-visible{outline:4px solid #94C1FF; outline-offset:3px;}
+
+/* ===== 셸 ===== */
+header{
+  display:flex; align-items:center; gap:14px;
+  padding:14px 22px; background:var(--card);
+  box-shadow:0 1px 0 var(--hair), 0 4px 16px rgba(25,31,40,.04);
+  position:relative; z-index:5;
+}
+#title{
+  flex:1; text-align:center; font-weight:800;
+  font-size:clamp(20px,2.2vw,30px); letter-spacing:-.5px;
+}
+.hbtn{
+  min-height:68px; padding:10px 26px; border-radius:999px;
+  background:#F2F4F8; font-weight:700;
+  font-size:clamp(17px,1.7vw,24px);
+  transition:background .15s ease, transform .1s ease;
+}
+.hbtn:hover{background:#E8ECF2;}
+.hbtn:active{transform:scale(.96);}
+
+main#stage{
+  flex:1; min-height:0; overflow:auto;
+  display:flex; flex-direction:column; align-items:center;
+  padding:20px 22px;
+}
+footer#dots{
+  display:flex; align-items:center; justify-content:center; gap:10px; padding:16px;
+}
+footer#dots:empty{display:none;}
+.d{width:13px; height:13px; border-radius:999px; background:#D8DEE8; transition:all .25s ease;}
+.d.done{background:var(--green);}
+.d.cur{width:38px; background:var(--accent);}
+
+/* ===== 지시문 ===== */
+.say{
+  margin:8px 0 18px; text-align:center; font-weight:800;
+  font-size:clamp(26px,3.4vw,44px); letter-spacing:-1px; text-wrap:balance;
+}
+
+/* ===== 홈 ===== */
+.home{width:100%; max-width:1500px; text-align:center; margin:auto;}
+.home h1{font-size:clamp(30px,3.8vw,52px); font-weight:800; letter-spacing:-1.5px;}
+.cards{display:flex; gap:26px; justify-content:center; flex-wrap:wrap; margin-top:34px;}
+.card{
+  position:relative; width:min(350px,90vw); min-height:300px;
+  background:var(--card); border-radius:32px;
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:22px;
+  box-shadow:var(--shadow-sm);
+  transition:transform .18s ease, box-shadow .18s ease;
+}
+.card:hover{transform:translateY(-6px); box-shadow:var(--shadow-md);}
+.card:active{transform:translateY(0) scale(.98);}
+.cicon{
+  width:140px; height:140px; border-radius:50%; background:var(--accent-soft);
+  display:flex; align-items:center; justify-content:center;
+  font-size:72px; line-height:1;
+}
+.cicon svg{width:72px; height:72px; display:block;}
+.cname{font-size:clamp(23px,2.3vw,32px); font-weight:800; letter-spacing:-.5px;}
+.badge{
+  position:absolute; top:18px; right:18px; background:var(--green-soft); color:#087F46;
+  border-radius:999px; padding:9px 18px; font-weight:800; font-size:17px;
+}
+
+/* ===== 큰 버튼 ===== */
+.big-btn{
+  flex:none;
+  min-height:92px; min-width:280px; padding:18px 52px; margin-top:24px;
+  border-radius:999px;
+  background:var(--accent); color:#fff; font-weight:800;
+  font-size:clamp(23px,2.5vw,34px); letter-spacing:-.5px;
+  box-shadow:0 10px 26px rgba(49,130,246,.35);
+  transition:transform .12s ease, box-shadow .12s ease, filter .12s ease;
+}
+.big-btn:hover{filter:brightness(1.06);}
+.big-btn:active{transform:translateY(2px) scale(.98); box-shadow:0 5px 14px rgba(49,130,246,.3);}
+.big-btn.green{background:var(--green); box-shadow:0 10px 26px rgba(11,163,96,.35);}
+.big-btn.green:active{box-shadow:0 5px 14px rgba(11,163,96,.3);}
+
+/* ===== 무대 공통 ===== */
+.scene{
+  flex:1; width:100%; max-width:1200px; min-height:0;
+  display:flex; align-items:center; justify-content:center; gap:28px;
+}
+.pulse{animation:pulse 1.3s ease-in-out infinite; transform-box:fill-box; transform-origin:center;}
+@keyframes pulse{0%,100%{transform:scale(1);}50%{transform:scale(1.12);}}
+.hint{animation:hintblink .7s ease-in-out 4; transform-box:fill-box; transform-origin:center;}
+@keyframes hintblink{0%,100%{filter:none;}50%{filter:drop-shadow(0 0 18px var(--sun)) brightness(1.25);}}
+@media (prefers-reduced-motion:reduce){.pulse,.hint{animation:none;}}
+
+/* ===== 칭찬 오버레이 ===== */
+#praise{
+  position:fixed; inset:0; z-index:50; display:flex; align-items:center; justify-content:center;
+  background:rgba(255,255,255,.94); backdrop-filter:blur(6px);
+}
+#praise[hidden]{display:none;}
+#praise .pop{
+  text-align:center; font-size:clamp(44px,7vw,88px); font-weight:800; letter-spacing:-2px;
+  color:var(--green); animation:popin .45s cubic-bezier(.2,1.6,.4,1);
+}
+#praise .pop .pe{font-size:clamp(80px,13vw,170px); display:block;}
+@keyframes popin{from{transform:scale(.3); opacity:0;}to{transform:scale(1); opacity:1;}}
+
+/* ===== 노트북/전원 장면 ===== */
+.laptop-svg{width:min(92vw,760px); height:auto; max-height:100%; display:block;
+  filter:drop-shadow(0 18px 30px rgba(25,31,40,.14));}
+.laptop-svg #pwrBtn{cursor:pointer;}
+.boot{flex-direction:column; gap:28px; background:#15171F; border-radius:28px; color:#fff;
+  align-self:stretch; max-width:1000px; margin:0 auto; width:100%; box-shadow:var(--shadow-md);}
+.winlogo{display:grid; grid-template-columns:1fr 1fr; gap:8px; width:104px; height:104px;}
+.winlogo span{background:var(--accent); border-radius:7px;}
+.spinner{width:52px; height:52px; border-radius:50%; border:6px solid #333A4E; border-top-color:#fff; animation:spin 1s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.boot p{font-size:clamp(23px,2.5vw,34px); font-weight:700; margin:0;}
+
+.desktop{
+  position:relative; align-self:stretch; width:100%; max-width:1000px; margin:0 auto;
+  border-radius:24px; overflow:hidden;
+  background:linear-gradient(160deg,#8AB9EE,#B4D8F5 65%,#D4EBFA);
+  display:flex; flex-direction:column; min-height:230px;
+  box-shadow:var(--shadow-md), inset 0 0 0 1px var(--hair);
+}
+.wall{flex:1; display:flex; gap:36px; padding:30px; align-items:flex-start;}
+.dicon{display:flex; flex-direction:column; align-items:center; gap:7px;
+  font-size:52px; color:#fff; font-weight:700;}
+.dicon span{font-size:19px; text-shadow:0 2px 6px rgba(20,45,80,.5);}
+.taskbar{display:flex; align-items:center; gap:12px; padding:12px 16px;
+  background:rgba(255,255,255,.88); backdrop-filter:blur(4px); box-shadow:0 -1px 0 var(--hair);}
+.startbtn{
+  display:flex; align-items:center; gap:12px; border-radius:16px; cursor:pointer;
+  background:var(--card); font-weight:800; font-size:clamp(19px,1.9vw,26px); padding:14px 26px; min-height:74px;
+  box-shadow:var(--shadow-sm);
+}
+.startbtn .winlogo{width:32px; height:32px; gap:3px;}
+.startbtn .winlogo span{border-radius:3px;}
+.menu{
+  position:absolute; left:18px; bottom:106px; background:var(--card);
+  border-radius:24px; padding:16px; display:flex; flex-direction:column; gap:10px;
+  box-shadow:0 18px 44px rgba(25,31,40,.22); min-width:min(420px,80%);
+}
+.menu .mrow{
+  display:flex; align-items:center; gap:14px; border-radius:16px; padding:14px 18px;
+  font-size:clamp(19px,1.9vw,26px); font-weight:700; text-align:left;
+}
+.menu .mrow.faded{opacity:.35;}
+.menu .mrow.bigrow{
+  background:var(--accent-soft); color:var(--accent-deep); min-height:86px;
+  font-size:clamp(23px,2.3vw,32px); font-weight:800; cursor:pointer;
+}
+.menu .mrow.bigrow:hover{background:#DDEBFF;}
+.menu .mrow svg{width:44px; height:44px; flex:none;}
+
+.nopress{flex-wrap:wrap;}
+.np-card{
+  flex:1; min-width:280px; max-width:440px; background:var(--card);
+  border-radius:28px; padding:30px; text-align:center; box-shadow:var(--shadow-sm);
+}
+.np-card .mark{font-size:clamp(56px,6.5vw,92px); line-height:1.1; font-weight:800;}
+.np-card p{font-size:clamp(21px,2.3vw,30px); font-weight:800; margin:12px 0 0; letter-spacing:-.5px;}
+.np-card .art{font-size:74px;}
+.np-card .art svg{width:84px; height:84px;}
+.np-card.bad .mark{color:#E5484D;}
+.np-card.good .mark{color:var(--green);}
+
+.mini-screen{
+  position:relative; height:170px; margin:0 auto; max-width:340px;
+  background:linear-gradient(165deg,#F0F6FF,#E3EEFC); border-radius:18px; overflow:hidden;
+  box-shadow:inset 0 0 0 1px var(--hair);
+  display:flex; align-items:center; justify-content:center;
+}
+.demo-cursor{position:absolute; left:12%; top:16%; animation:cursormove 2.4s ease-in-out infinite alternate;}
+.demo-cursor svg{width:52px; height:52px; display:block;}
+@keyframes cursormove{to{left:62%; top:55%;}}
+.type-demo{font-size:clamp(28px,3vw,42px); font-weight:800; color:var(--accent-deep);}
+.caret{display:inline-block; width:4px; height:1.05em; background:var(--ink); vertical-align:-.12em; margin-left:5px; animation:blink 1s steps(1) infinite;}
+@keyframes blink{50%{opacity:0;}}
+@media (prefers-reduced-motion:reduce){.demo-cursor,.caret{animation:none;}}
+
+.fadeout{
+  position:fixed; inset:0; z-index:40; background:#0F1118; display:flex; align-items:center; justify-content:center;
+  animation:fadein 1.2s ease forwards; color:#fff; font-size:clamp(30px,4vw,52px); font-weight:800;
+}
+@keyframes fadein{from{opacity:0;}to{opacity:1;}}
+
+/* ===== 마우스 연습 ===== */
+.playarea{
+  position:relative; flex:1; align-self:stretch; width:100%; max-width:1100px; margin:0 auto;
+  min-height:min(52vh,480px); background:var(--card); border-radius:28px; box-shadow:var(--shadow-sm);
+}
+.target{
+  position:absolute; font-size:clamp(120px,17vw,190px); line-height:1;
+  padding:14px; filter:drop-shadow(0 10px 16px rgba(25,31,40,.18));
+}
+.pos-l{left:6%; top:50%; transform:translateY(-50%);}
+.pos-c{left:50%; top:50%; transform:translate(-50%,-50%);}
+.pos-r{right:6%; top:50%; transform:translateY(-50%);}
+.target.dwell{animation:charge 3s linear forwards;}
+@keyframes charge{from{scale:1;}to{scale:1.45; filter:drop-shadow(0 0 32px #FFC342);}}
+.target.pop2{animation:targetpop .55s ease forwards;}
+@keyframes targetpop{40%{transform:scale(1.4); opacity:1;}100%{transform:scale(.1); opacity:0;}}
+.pos-l.pop2,.pos-r.pop2{animation-name:targetpopY;}
+@keyframes targetpopY{40%{transform:translateY(-50%) scale(1.4); opacity:1;}100%{transform:translateY(-50%) scale(.1); opacity:0;}}
+.pos-c.pop2{animation-name:targetpopC;}
+@keyframes targetpopC{40%{transform:translate(-50%,-50%) scale(1.4); opacity:1;}100%{transform:translate(-50%,-50%) scale(.1); opacity:0;}}
+
+.reps{display:flex; justify-content:center; gap:12px; margin-top:16px; font-size:24px; letter-spacing:6px; color:#C6CDD9;}
+.reps b{color:var(--accent);}
+
+.scrollplay{overflow:hidden; background:linear-gradient(180deg,#E8F3FE,#F6FBF0);}
+.bee{position:absolute; left:50%; transform:translateX(-50%); font-size:clamp(80px,10vw,120px);
+  line-height:1; transition:top .15s ease; z-index:2;
+  filter:drop-shadow(0 8px 14px rgba(25,31,40,.18));}
+.sc-top{position:absolute; top:2%; left:50%; transform:translateX(-50%); font-size:clamp(70px,8vw,100px); line-height:1;}
+.sc-bottom{position:absolute; bottom:2%; left:50%; transform:translateX(-50%); font-size:clamp(56px,7vw,84px); line-height:1;}
+.sc-top.pop3,.sc-bottom.pop3{animation:scpop .5s ease;}
+@keyframes scpop{50%{scale:1.25;}}
+.dirchip{position:absolute; top:14px; right:18px; z-index:3;
+  background:var(--accent-soft); color:var(--accent-deep); font-weight:800;
+  border-radius:999px; padding:12px 20px; font-size:clamp(17px,1.8vw,24px);}
+
+.apple{
+  position:absolute; left:8%; top:50%; margin-top:-80px; font-size:130px; line-height:1;
+  touch-action:none; cursor:grab; z-index:2; padding:10px;
+  filter:drop-shadow(0 10px 16px rgba(25,31,40,.18));
+}
+.apple.grab{cursor:grabbing;}
+.apple.back{transition:transform .45s ease;}
+.basket{
+  position:absolute; right:5%; top:50%; transform:translateY(-50%);
+  width:42%; min-width:220px; height:64%;
+  border:3px dashed #A8C6F2; border-radius:28px; background:var(--accent-soft);
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  font-size:92px;
+}
+.basket span{font-size:clamp(19px,1.9vw,26px); font-weight:800; color:var(--accent-deep);}
+.basket.pop2{animation:basketpop .5s ease;}
+@keyframes basketpop{50%{transform:translateY(-50%) scale(1.06); background:#DFF3E8;}}
+
+/* ===== 키보드 연습 ===== */
+.keyshow{
+  min-height:clamp(140px,24vh,240px); width:min(92vw,760px); margin:0 auto;
+  background:var(--card); border-radius:28px; box-shadow:var(--shadow-sm);
+  display:flex; align-items:center; justify-content:center;
+  font-size:clamp(64px,11vw,150px); font-weight:800; color:var(--accent-deep);
+  text-align:center; padding:10px;
+}
+.keyshow.dim{color:#C6CDD9;}
+.keyshow.pop3{animation:keypop .3s ease;}
+@keyframes keypop{50%{transform:scale(1.1);}}
+.kb{
+  display:flex; flex-direction:column; gap:8px; margin:20px auto 0;
+  background:#E9EDF4; border-radius:22px; padding:16px;
+  width:min(94vw,860px); box-shadow:var(--shadow-sm);
+}
+.kb-row{display:flex; gap:8px; justify-content:center;}
+.key{
+  flex:1; max-width:72px; min-width:0; aspect-ratio:1;
+  background:var(--card); border-radius:11px;
+  box-shadow:0 2px 0 #D0D7E2;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  font-weight:700; font-size:clamp(11px,1.6vw,16px); color:var(--sub);
+}
+.key b{font-size:clamp(14px,2.1vw,22px); color:var(--ink);}
+.key.wide{max-width:150px; aspect-ratio:auto;}
+.key.space{flex:6; max-width:460px; aspect-ratio:auto;}
+.key.kb-target{background:var(--accent); box-shadow:0 2px 0 var(--accent-deep); color:#fff;}
+.key.kb-target b{color:#fff;}
+
+.target.wiggle{animation:wiggle .4s ease;}
+@keyframes wiggle{25%{rotate:-9deg;}75%{rotate:9deg;}}
+.ctxmenu{
+  position:absolute; z-index:4; background:var(--card); border-radius:16px; padding:16px 24px;
+  box-shadow:0 14px 34px rgba(25,31,40,.22); font-size:clamp(17px,1.8vw,24px);
+  font-weight:700; line-height:2; text-align:left;
+  animation:popin .3s cubic-bezier(.2,1.6,.4,1);
+}
+
+/* ===== 축하 ===== */
+.confetti{position:fixed; inset:0; pointer-events:none; overflow:hidden; z-index:1;}
+.confetti span{position:absolute; top:-60px; font-size:36px; animation:fall linear infinite;}
+@keyframes fall{to{transform:translateY(115vh) rotate(340deg);}}
+@media (prefers-reduced-motion:reduce){.confetti span{animation:none; display:none;}}
+.fin-sub{font-size:clamp(20px,2.2vw,30px); font-weight:700; color:var(--sub); margin:0 0 10px; line-height:1.7;}
+.celebrate{text-align:center; margin:auto; position:relative; z-index:2;}
+.celebrate .ce{font-size:clamp(90px,14vw,180px); line-height:1.1; display:block;
+  filter:drop-shadow(0 14px 24px rgba(255,195,66,.4));}
+.celebrate h2{font-size:clamp(32px,4.2vw,56px); font-weight:800; letter-spacing:-1.5px; color:var(--green); margin:16px 0 8px;}
+.celebrate .btns{display:flex; gap:18px; justify-content:center; flex-wrap:wrap;}
+
+@media (max-width:700px){
+  .scene{flex-direction:column;}
+  .hbtn{min-height:58px; padding:8px 16px;}
+}
+@media (max-height:700px){
+  .menu .mrow.faded{display:none;}
+  .say{margin:2px 0 10px;}
+  .key{aspect-ratio:auto; min-height:44px;}
+  .keyshow{min-height:104px; font-size:clamp(48px,10vh,90px);}
+  .kb{gap:6px; padding:10px; margin-top:12px;}
+  .big-btn{min-height:76px; margin-top:14px;}
+  .np-card{padding:16px;}
+  .np-card .mark{font-size:44px;}
+  .np-card .art{font-size:52px;}
+  .np-card .art svg{width:58px; height:58px;}
+  .mini-screen{height:110px;}
+}
+</style>
+</head>
+<body>
+<header>
+  <button class="hbtn" id="homeBtn" type="button">🏠 처음으로</button>
+  <div id="title">컴퓨터와 친해지기</div>
+  <button class="hbtn" id="volBtn" type="button" aria-label="소리 조절">🔊</button>
+  <button class="hbtn" id="ttsBtn" type="button">💬 다시 듣기</button>
+</header>
+<main id="stage"></main>
+<footer id="dots"></footer>
+<div id="praise" hidden></div>
+
+<script>
+'use strict';
+const $ = s => document.querySelector(s);
+const stage = $('#stage'), dots = $('#dots');
+
+/* ===== 음성 (TTS) ===== */
+let koVoice = null, lastTts = '';
+function pickVoice(){
+  try{ koVoice = speechSynthesis.getVoices().find(v => v.lang.replace('_','-').startsWith('ko')) || null; }catch(e){}
+}
+try{ speechSynthesis.onvoiceschanged = pickVoice; pickVoice(); }catch(e){}
+const VOLS = [
+  {v:1,   icon:'🔊', name:'소리 크게'},
+  {v:.35, icon:'🔉', name:'소리 작게'},
+  {v:0,   icon:'🔇', name:'소리 끔'},
+];
+let volIdx = 0;
+try{ volIdx = (+localStorage.getItem('digibasic_vol') || 0) % 3; }catch(e){}
+function updateVolBtn(){
+  const s = VOLS[volIdx];
+  $('#volBtn').textContent = s.icon;
+  $('#volBtn').setAttribute('aria-label', s.name);
+}
+$('#volBtn').onclick = e => {
+  e.currentTarget.blur();
+  volIdx = (volIdx + 1) % 3;
+  try{ localStorage.setItem('digibasic_vol', volIdx); }catch(e2){}
+  updateVolBtn();
+  speak(VOLS[volIdx].name + '로 바꿨어요');
+};
+function speak(t){
+  if(!t) return;
+  lastTts = t;
+  console.log('[tts]', t);
+  if(!VOLS[volIdx].v) return;
+  try{
+    speechSynthesis.cancel();
+    setTimeout(() => {
+      const u = new SpeechSynthesisUtterance(t);
+      u.lang = 'ko-KR'; u.rate = .85; u.pitch = 1.02;
+      u.volume = VOLS[volIdx].v;
+      if(koVoice) u.voice = koVoice;
+      speechSynthesis.speak(u);
+    }, 60);
+  }catch(e){}
+}
+updateVolBtn();
+document.addEventListener('pointerdown', () => {
+  try{ speechSynthesis.speak(new SpeechSynthesisUtterance(' ')); }catch(e){}
+}, {once:true});
+$('#ttsBtn').onclick = e => { e.currentTarget.blur(); speak(lastTts); };
+
+/* ===== 진행 상태 ===== */
+const KEY = 'digibasic_l1_v1';
+let done = {};
+try{ done = JSON.parse(localStorage.getItem(KEY)) || {}; }catch(e){}
+function saveDone(id){ done[id] = true; try{ localStorage.setItem(KEY, JSON.stringify(done)); }catch(e){} }
+const S = { screen:'home', mi:-1, si:0, rep:0 };
+let busy = false;
+
+/* ===== 그림 조각 ===== */
+function pwrSvg(cls){
+  return `<svg class="${cls||''}" viewBox="0 0 100 100" aria-hidden="true">
+    <circle cx="50" cy="50" r="44" fill="#EBF3FF"/>
+    <path d="M50 26 v22" stroke="#1B64DA" stroke-width="9" stroke-linecap="round"/>
+    <path d="M33 38 a24 24 0 1 0 34 0" fill="none" stroke="#1B64DA" stroke-width="9" stroke-linecap="round"/>
+  </svg>`;
+}
+const sceneLaptop = () => `<div class="scene">
+  <svg class="laptop-svg" viewBox="0 0 900 560" aria-label="노트북 그림">
+    <rect x="150" y="24" width="600" height="376" rx="22" fill="#2E3440"/>
+    <rect x="172" y="46" width="556" height="332" rx="10" fill="#12141C"/>
+    <path d="M110 404 L790 404 L842 506 Q848 524 824 524 L76 524 Q52 524 58 506 Z" fill="#D8DEE8"/>
+    <rect x="205" y="428" width="410" height="62" rx="10" fill="#C3CBD9"/>
+    <rect x="380" y="498" width="140" height="14" rx="7" fill="#C3CBD9"/>
+    <g id="pwrBtn" class="pulse" role="button" aria-label="전원 버튼">
+      <circle cx="700" cy="459" r="38" fill="#fff" stroke="#C3CBD9" stroke-width="3"/>
+      <path d="M700 438 v19" stroke="#3182F6" stroke-width="8" stroke-linecap="round"/>
+      <path d="M686 448 a20 20 0 1 0 28 0" fill="none" stroke="#3182F6" stroke-width="8" stroke-linecap="round"/>
+    </g>
+  </svg>
+</div>`;
+const sceneBoot = () => `<div class="scene boot">
+  <div class="winlogo"><span></span><span></span><span></span><span></span></div>
+  <div class="spinner"></div>
+  <p>컴퓨터가 켜지고 있어요</p>
+</div>`;
+const ICONS = `<div class="dicon">📁<span>내 문서</span></div><div class="dicon">🌐<span>인터넷</span></div><div class="dicon">🖼️<span>사진</span></div>`;
+const startBtnHtml = (hl) => `<button id="startBtn" class="startbtn ${hl?'pulse':''}" type="button">
+  <span class="winlogo"><span></span><span></span><span></span><span></span></span> 시작</button>`;
+const sceneDesktop = (hl) => `<div class="scene"><div class="desktop">
+  <div class="wall">${ICONS}</div>
+  <div class="taskbar">${startBtnHtml(hl)}</div>
+</div></div>`;
+const sceneNoPress = () => `<div class="scene nopress">
+  <div class="np-card bad"><div class="art">${pwrSvg()}</div><div class="mark">❌</div><p>전원 버튼을<br>꾹 누르면 안 돼요</p></div>
+  <div class="np-card good"><div class="art">🖥️🖱️</div><div class="mark">⭕</div><p>화면에서<br>마우스로 꺼요</p></div>
+</div>`;
+const sceneStartMenu = () => `<div class="scene"><div class="desktop">
+  <div class="wall" style="opacity:.4">${ICONS}</div>
+  <div class="menu">
+    <button class="mrow faded" type="button" tabindex="-1">📁 문서</button>
+    <button class="mrow faded" type="button" tabindex="-1">⚙️ 설정</button>
+    <button id="pwrIcon" class="mrow bigrow pulse" type="button">${pwrSvg()} 전원</button>
+  </div>
+  <div class="taskbar">${startBtnHtml(false)}</div>
+</div></div>`;
+const scenePowerMenu = () => `<div class="scene"><div class="desktop">
+  <div class="wall" style="opacity:.4">${ICONS}</div>
+  <div class="menu">
+    <button class="mrow faded" type="button" tabindex="-1">🌙 절전</button>
+    <button class="mrow faded" type="button" tabindex="-1">🔄 다시 시작</button>
+    <button id="shutBtn" class="mrow bigrow pulse" type="button">${pwrSvg()} 시스템 종료</button>
+  </div>
+  <div class="taskbar">${startBtnHtml(false)}</div>
+</div></div>`;
+
+const padSvg = `<svg viewBox="0 0 130 96" style="width:100px;height:74px" aria-hidden="true">
+  <rect x="5" y="5" width="120" height="86" rx="14" fill="#E9EDF4"/>
+  <rect x="5" y="5" width="120" height="86" rx="14" fill="none" stroke="#C3CBD9" stroke-width="4"/>
+  <line x1="5" y1="66" x2="125" y2="66" stroke="#C3CBD9" stroke-width="4"/>
+  <line x1="65" y1="66" x2="65" y2="91" stroke="#C3CBD9" stroke-width="4"/>
+</svg>`;
+const cursorSvg = `<svg viewBox="0 0 24 24" aria-hidden="true">
+  <path d="M5 2 L5 20 L9.5 15.8 L12 22 L15 20.6 L12.4 14.6 L18 14 Z" fill="#191F28" stroke="#fff" stroke-width="1.2"/>
+</svg>`;
+const sceneMouseIntro = () => `<div class="scene nopress">
+  <div class="np-card"><div class="art">🖱️ ${padSvg}</div><p>마우스와 터치패드는<br>손 대신 가리켜요</p></div>
+  <div class="np-card"><div class="mini-screen"><span class="demo-cursor">${cursorSvg}</span></div><p>움직이면 화면의<br>화살표가 움직여요</p></div>
+</div>`;
+const sceneKeyIntro = () => `<div class="scene nopress">
+  <div class="np-card"><div class="art">⌨️</div><p>키보드</p></div>
+  <div class="np-card"><div class="mini-screen"><span class="type-demo">안녕하세요<span class="caret"></span></span></div><p>컴퓨터에 글자를 써요</p></div>
+</div>`;
+
+/* ===== 키보드 그림 ===== */
+const KO = {Q:'ㅂ',W:'ㅈ',E:'ㄷ',R:'ㄱ',T:'ㅅ',Y:'ㅛ',U:'ㅕ',I:'ㅑ',O:'ㅐ',P:'ㅔ',
+            A:'ㅁ',S:'ㄴ',D:'ㅇ',F:'ㄹ',G:'ㅎ',H:'ㅗ',J:'ㅓ',K:'ㅏ',L:'ㅣ',
+            Z:'ㅋ',X:'ㅌ',C:'ㅊ',V:'ㅍ',B:'ㅠ',N:'ㅜ',M:'ㅡ'};
+function kbScene(target){
+  const k = L => `<span class="key" data-code="Key${L}"><b>${KO[L]}</b>${L}</span>`;
+  return `<div class="kb" aria-hidden="true">
+    <div class="kb-row">${'QWERTYUIOP'.split('').map(k).join('')}</div>
+    <div class="kb-row">${'ASDFGHJKL'.split('').map(k).join('')}<span class="key wide ${target==='Enter'?'kb-target pulse':''}" data-code="Enter"><b>엔터 ⏎</b></span></div>
+    <div class="kb-row">${'ZXCVBNM'.split('').map(k).join('')}</div>
+    <div class="kb-row"><span class="key space ${target==='Space'?'kb-target pulse':''}" data-code="Space"><b>스페이스 (제일 긴 키)</b></span></div>
+  </div>`;
+}
+const KEYNAMES = {Space:'스페이스',Enter:'엔터',Backspace:'지우기',Tab:'탭',Escape:'나가기',
+  CapsLock:'캡스락',ShiftLeft:'시프트',ShiftRight:'시프트',
+  ArrowUp:'위쪽 ↑',ArrowDown:'아래쪽 ↓',ArrowLeft:'왼쪽 ←',ArrowRight:'오른쪽 →',
+  Lang1:'한/영',Lang2:'한자',HangulMode:'한/영'};
+function keyLabel(e){
+  const c = e.code;
+  if(c.startsWith('Key')){ const L = c[3]; return KO[L] ? KO[L]+'  '+L : L; }
+  if(c.startsWith('Digit')) return c.slice(5);
+  if(KEYNAMES[c]) return KEYNAMES[c];
+  return (e.key && e.key.length === 1 && e.key !== ' ') ? e.key : '';
+}
+
+/* ===== 학습 내용 (단일 데이터) ===== */
+const MODULES = [
+  { id:'power', title:'전원 켜고 끄기', icon:pwrSvg(), doneMsg:'전원 박사가 되었어요!', steps:[
+    { type:'hotspot', scene:sceneLaptop, target:'#pwrBtn',
+      text:'동그란 전원 버튼을 눌러 보세요', wrongTts:'반짝이는 동그란 버튼을 찾아보세요.' },
+    { type:'wait', scene:sceneBoot, ms:3500, text:'조금만 기다려요' },
+    { type:'info', scene:()=>sceneDesktop(false), text:'컴퓨터가 켜졌어요! 이 화면이 바탕화면이에요' },
+    { type:'info', scene:sceneNoPress, text:'끌 때는 전원 버튼을 누르지 않아요. 화면에서 꺼요' },
+    { type:'hotspot', scene:()=>sceneDesktop(true), target:'#startBtn',
+      text:'왼쪽 아래 시작 버튼을 눌러 보세요', wrongTts:'화면 왼쪽 아래를 보세요.' },
+    { type:'hotspot', scene:sceneStartMenu, target:'#pwrIcon',
+      text:'전원 그림을 눌러 보세요', wrongTts:'파란 전원 그림을 눌러 보세요.' },
+    { type:'hotspot', scene:scenePowerMenu, target:'#shutBtn', outro:'fade',
+      text:'시스템 종료를 눌러 보세요', wrongTts:'시스템 종료 버튼을 눌러 보세요.' },
+  ]},
+  { id:'mouse', title:'마우스 연습', icon:'🖱️', doneMsg:'마우스 박사가 되었어요!', steps:[
+    { type:'info', scene:sceneMouseIntro, text:'마우스는 화면의 화살표를 움직이는 손이에요' },
+    { type:'targets', emoji:'⭐', reps:3, dwell:3000, text:'별 위에 올리고 잠깐 기다려요' },
+    { type:'targets', emoji:'🎈', reps:3, text:'풍선을 딸깍! 눌러 보세요' },
+    { type:'targets', emoji:'🎁', openEmoji:'🧸', reps:2, dbl:true,
+      text:'선물을 콩콩! 두 번 빠르게 눌러요' },
+    { type:'targets', emoji:'📦', reps:2, rclick:true,
+      text:'상자 위에서 오른쪽 버튼을 눌러 보세요',
+      wrongTts:'왼쪽 말고, 마우스 오른쪽 버튼을 눌러 보세요.' },
+    { type:'scroll', text:'휠을 아래로 굴려서 벌을 꽃까지 보내요',
+      upText:'이번에는 위로 굴려서 구름까지 올라가요' },
+    { type:'drag', items:['🍎','🍌','🍓','🍊'], text:'과일을 꾹 잡고 바구니에 옮겨요',
+      missTts:'괜찮아요. 과일을 꾹 잡은 채로 움직여 보세요.' },
+    { type:'popfree', text:'마음껏 터뜨려 보세요!' },
+  ]},
+  { id:'key', title:'키보드 연습', icon:'⌨️', doneMsg:'키보드 박사가 되었어요!', steps:[
+    { type:'info', scene:sceneKeyIntro, text:'키보드는 컴퓨터에 글자를 쓰는 도구예요' },
+    { type:'anykey', reps:3, text:'아무 키나 눌러 보세요' },
+    { type:'targetkey', code:'Space', text:'제일 긴 키, 스페이스를 눌러 보세요',
+      wrongTts:'좋아요! 이번에는 제일 긴 키를 눌러 볼까요?' },
+    { type:'targetkey', code:'Enter', text:'엔터 키를 눌러 보세요',
+      wrongTts:'좋아요! 이번에는 파란색 엔터 키를 눌러 볼까요?' },
+    { type:'freeplay', text:'내 이름 첫 글자를 찾아 눌러 보세요' },
+  ]},
+];
+
+/* ===== 칭찬 ===== */
+const PRAISES = ['참 잘했어요!','정말 멋져요!','최고예요!','아주 잘했어요!'];
+const CHEERS = ['좋아요!','잘했어요!','우와, 멋져요!'];
+let praiseN = 0, cheerN = 0;
+function praise(cb){
+  const t = PRAISES[praiseN++ % PRAISES.length];
+  $('#praise').innerHTML = `<div class="pop"><span class="pe">🎉</span>${t}</div>`;
+  $('#praise').hidden = false;
+  speak(t);
+  setTimeout(() => { $('#praise').hidden = true; cb && cb(); }, 1800);
+}
+function cheer(){ speak(CHEERS[cheerN++ % CHEERS.length]); }
+
+/* ===== 진행/화면 전환 ===== */
+function renderDots(){
+  const m = MODULES[S.mi];
+  dots.innerHTML = (S.screen === 'play' && m)
+    ? m.steps.map((_,i) => `<span class="d ${i < S.si ? 'done' : i === S.si ? 'cur' : ''}"></span>`).join('')
+    : '';
+}
+function repsHtml(rep, total){
+  return `<div class="reps" aria-hidden="true">${'<b>●</b>'.repeat(rep)}${'○'.repeat(total-rep)}</div>`;
+}
+function runStep(){
+  const m = MODULES[S.mi], step = m.steps[S.si];
+  S.rep = 0; S.screen = 'play';
+  stage.onclick = null;
+  renderDots();
+  speak(step.text);
+  RUN[step.type](step, stage);
+}
+function nextStep(){
+  const m = MODULES[S.mi];
+  if(S.si >= m.steps.length - 1){ saveDone(m.id); celebrate(m); }
+  else { S.si++; runStep(); }
+}
+function winStep(){
+  if(busy) return;
+  busy = true;
+  praise(() => { busy = false; nextStep(); });
+}
+function celebrate(m){
+  S.screen = 'celebrate';
+  stage.onclick = null;
+  renderDots();
+  if(MODULES.every(x => done[x.id])){ finale(); return; }
+  stage.innerHTML = `<div class="celebrate">
+    <span class="ce">🏆</span>
+    <h2>${m.doneMsg}</h2>
+    <div class="btns">
+      <button class="big-btn green" id="againBtn" type="button">🔄 한 번 더</button>
+      <button class="big-btn" id="homeBtn2" type="button">🏠 처음으로</button>
+    </div>
+  </div>`;
+  speak(m.doneMsg);
+  $('#againBtn').onclick = () => { S.si = 0; runStep(); };
+  $('#homeBtn2').onclick = goHome;
+}
+function finale(){
+  const E = ['🎉','🎊','⭐','🌸'];
+  const conf = Array.from({length:16}, (_, i) =>
+    `<span style="left:${(i * 6.3 + 2) % 96}%; animation-duration:${2.6 + (i % 5) * .5}s; animation-delay:${(i % 7) * .45}s">${E[i % 4]}</span>`).join('');
+  stage.innerHTML = `<div class="confetti" aria-hidden="true">${conf}</div>
+    <div class="celebrate">
+      <span class="ce">🎓</span>
+      <h2>오늘 공부 다 했어요!</h2>
+      <p class="fin-sub">전원 켜고 끄기 ✅&ensp;마우스 ✅&ensp;키보드 ✅<br>정말 대단해요!</p>
+      <div class="btns">
+        <button class="big-btn" id="homeBtn2" type="button">🏠 처음으로</button>
+      </div>
+    </div>`;
+  speak('와! 오늘 공부를 모두 다 했어요. 정말 대단해요!');
+  $('#homeBtn2').onclick = goHome;
+}
+function startModule(i){
+  S.mi = i; S.si = 0;
+  $('#title').textContent = MODULES[i].title;
+  runStep();
+}
+function goHome(){
+  S.screen = 'home'; S.mi = -1;
+  stage.onclick = null;
+  try{ speechSynthesis.cancel(); }catch(e){}
+  $('#title').textContent = '컴퓨터와 친해지기';
+  renderDots();
+  stage.innerHTML = `<div class="home">
+    <h1>무엇을 해 볼까요?</h1>
+    <div class="cards">${MODULES.map((m,i) => `
+      <button class="card" data-i="${i}" type="button">
+        ${done[m.id] ? '<span class="badge">✅ 해냈어요</span>' : ''}
+        <span class="cicon">${m.icon}</span>
+        <span class="cname">${m.title}</span>
+      </button>`).join('')}
+    </div>
+  </div>`;
+  lastTts = '하고 싶은 공부를 눌러 보세요.';
+  stage.querySelectorAll('.card').forEach(c => c.onclick = () => startModule(+c.dataset.i));
+}
+$('#homeBtn').onclick = e => { e.currentTarget.blur(); goHome(); };
+
+/* ===== 단계 실행기 ===== */
+const RUN = {
+  hotspot(step, el){
+    el.innerHTML = `<p class="say" role="status">${step.text}</p>${step.scene()}`;
+    el.onclick = e => {
+      if(busy) return;
+      const t = e.target.closest(step.target);
+      if(t){
+        el.onclick = null;
+        if(step.outro === 'fade'){
+          el.insertAdjacentHTML('beforeend', '<div class="fadeout"><p>안녕히 계세요 👋</p></div>');
+          speak('컴퓨터가 꺼졌어요.');
+          setTimeout(winStep, 1700);
+        } else winStep();
+      } else if(!e.target.closest('.say')){
+        const tg = el.querySelector(step.target);
+        if(tg){ tg.classList.remove('hint'); void tg.getBoundingClientRect(); tg.classList.add('hint'); }
+        speak(step.wrongTts);
+      }
+    };
+  },
+  wait(step, el){
+    el.innerHTML = `<p class="say" role="status">${step.text}</p>${step.scene()}`;
+    setTimeout(() => { speak('잘 기다렸어요!'); setTimeout(nextStep, 1300); }, step.ms);
+  },
+  info(step, el){
+    el.innerHTML = `<p class="say" role="status">${step.text}</p>${step.scene()}
+      <button class="big-btn" id="nextBtn" type="button">다음 ▶</button>`;
+    $('#nextBtn').onclick = e => { e.currentTarget.blur(); nextStep(); };
+  },
+  targets(step, el){
+    el.innerHTML = `<p class="say" role="status">${step.text}</p>
+      <div class="playarea"></div>${repsHtml(0, step.reps)}`;
+    const area = el.querySelector('.playarea');
+    area.addEventListener('contextmenu', e => e.preventDefault());
+    const POS = ['pos-l','pos-c','pos-r'];
+    let hitting = false;
+    function place(){
+      area.innerHTML = `<button class="target ${POS[S.rep % 3]}" type="button" aria-label="목표">${step.emoji}</button>`;
+      const t = area.querySelector('.target');
+      const hit = () => {
+        if(hitting || busy) return;
+        hitting = true;
+        t.classList.remove('dwell');
+        if(step.openEmoji) t.textContent = step.openEmoji;
+        t.classList.add('pop2');
+        S.rep++;
+        el.querySelector('.reps').outerHTML = repsHtml(S.rep, step.reps);
+        setTimeout(() => {
+          hitting = false;
+          if(S.rep >= step.reps) winStep();
+          else { cheer(); place(); }
+        }, 650);
+      };
+      if(step.dwell){
+        let timer = null, said = false;
+        t.addEventListener('pointerenter', () => {
+          if(hitting || busy) return;
+          t.classList.add('dwell');
+          if(!said){ said = true; speak('좋아요, 그대로 있어요!'); }
+          timer = setTimeout(hit, step.dwell);
+        });
+        t.addEventListener('pointerleave', () => {
+          clearTimeout(timer);
+          t.classList.remove('dwell');
+        });
+      } else if(step.dbl){
+        let last = 0, said = false;
+        t.addEventListener('click', () => {
+          if(hitting || busy) return;
+          const now = Date.now();
+          if(now - last < 900){ hit(); }
+          else {
+            last = now;
+            t.classList.remove('wiggle');
+            void t.getBoundingClientRect();
+            t.classList.add('wiggle');
+            if(!said){ said = true; speak('좋아요! 한 번 더 빠르게!'); }
+          }
+        });
+      } else if(step.rclick){
+        t.addEventListener('contextmenu', () => {
+          if(hitting || busy || t.dataset.hit) return;
+          t.dataset.hit = 1;
+          const r = t.getBoundingClientRect(), ar = area.getBoundingClientRect();
+          area.insertAdjacentHTML('beforeend',
+            `<div class="ctxmenu" style="left:${Math.min(r.right - ar.left - 30, ar.width - 240)}px; top:${r.top - ar.top + 30}px">✨ 비밀 메뉴<br>🍬 사탕 받기<br>⭐ 칭찬 받기</div>`);
+          setTimeout(hit, 900);
+        });
+        t.addEventListener('click', () => {
+          if(hitting || busy) return;
+          speak(step.wrongTts);
+        });
+      } else {
+        t.addEventListener('click', hit);
+      }
+    }
+    place();
+  },
+  drag(step, el){
+    const items = step.items || ['🍎'];
+    const total = items.length;
+    el.innerHTML = `<p class="say" role="status">${step.text}</p>
+      <div class="playarea drag">
+        <div class="apple" aria-label="과일">${items[0]}</div>
+        <div class="basket">🧺<span>바구니</span></div>
+      </div>${repsHtml(0, total)}`;
+    const a = el.querySelector('.apple'), b = el.querySelector('.basket');
+    let dragging = false, sx = 0, sy = 0;
+    a.addEventListener('pointerdown', e => {
+      dragging = true;
+      a.setPointerCapture(e.pointerId);
+      a.classList.remove('back'); a.classList.add('grab');
+      sx = e.clientX; sy = e.clientY;
+    });
+    a.addEventListener('pointermove', e => {
+      if(!dragging) return;
+      a.style.transform = `translate(${e.clientX - sx}px,${e.clientY - sy}px) scale(1.12)`;
+    });
+    a.addEventListener('pointerup', e => {
+      if(!dragging) return;
+      dragging = false;
+      a.classList.remove('grab');
+      const ar = a.getBoundingClientRect(), br = b.getBoundingClientRect();
+      const cx = ar.left + ar.width/2, cy = ar.top + ar.height/2;
+      if(cx > br.left && cx < br.right && cy > br.top && cy < br.bottom){
+        S.rep++;
+        el.querySelector('.reps').outerHTML = repsHtml(S.rep, total);
+        b.classList.add('pop2');
+        a.style.visibility = 'hidden';
+        setTimeout(() => {
+          b.classList.remove('pop2');
+          if(S.rep >= total) winStep();
+          else {
+            a.textContent = items[S.rep];
+            a.style.transform = ''; a.style.visibility = '';
+            cheer();
+          }
+        }, 750);
+      } else {
+        a.classList.add('back');
+        a.style.transform = '';
+        speak(step.missTts);
+      }
+    });
+  },
+  scroll(step, el){
+    el.innerHTML = `<p class="say" role="status">${step.text}</p>
+      <div class="playarea scrollplay">
+        <div class="dirchip" id="dirchip">🖱️ 휠을 아래로 ⬇</div>
+        <div class="sc-top">☁️</div>
+        <div class="bee" id="bee">🐝</div>
+        <div class="sc-bottom">🌷🌼🌷</div>
+      </div>${repsHtml(0, 2)}`;
+    const area = el.querySelector('.scrollplay'), bee = $('#bee');
+    let pos = 20, phase = 0;
+    bee.style.top = pos + '%';
+    area.addEventListener('wheel', e => {
+      e.preventDefault();
+      if(busy) return;
+      let d = e.deltaY * 0.06;
+      d = Math.max(-8, Math.min(8, d));
+      pos = Math.max(6, Math.min(76, pos + d));
+      bee.style.top = pos + '%';
+      if(phase === 0 && pos >= 74){
+        phase = 1; S.rep = 1;
+        el.querySelector('.reps').outerHTML = repsHtml(1, 2);
+        el.querySelector('.say').textContent = step.upText;
+        $('#dirchip').textContent = '🖱️ 휠을 위로 ⬆';
+        el.querySelector('.sc-bottom').classList.add('pop3');
+        speak('꽃에 도착했어요! ' + step.upText);
+      } else if(phase === 1 && pos <= 8){
+        phase = 2;
+        el.querySelector('.reps').outerHTML = repsHtml(2, 2);
+        el.querySelector('.sc-top').classList.add('pop3');
+        winStep();
+      }
+    }, {passive:false});
+  },
+  popfree(step, el){
+    el.innerHTML = `<p class="say" role="status">${step.text}</p>
+      <div class="playarea"></div>
+      <button class="big-btn green" id="doneBtn" type="button">다 했어요 ✅</button>`;
+    const area = el.querySelector('.playarea');
+    const EMO = ['🎈','⭐','🎁','🍭','⚽','🌸'];
+    let n = 0;
+    function spawn(){
+      const x = 5 + (n * 37) % 61, y = 5 + (n * 53) % 46;
+      area.innerHTML = `<button class="target" style="left:${x}%;top:${y}%" type="button" aria-label="목표">${EMO[n % EMO.length]}</button>`;
+      const t = area.querySelector('.target');
+      t.addEventListener('click', () => {
+        t.classList.add('pop2');
+        n++;
+        if(n % 4 === 0) cheer();
+        setTimeout(spawn, 450);
+      });
+    }
+    spawn();
+    $('#doneBtn').onclick = e => { e.currentTarget.blur(); winStep(); };
+  },
+  anykey(step, el){
+    el.innerHTML = `<p class="say" role="status">${step.text}</p>
+      <div class="keyshow dim" id="keyshow">?</div>${repsHtml(0, step.reps)}`;
+  },
+  targetkey(step, el){
+    el.innerHTML = `<p class="say" role="status">${step.text}</p>
+      <div class="keyshow dim" id="keyshow">?</div>${kbScene(step.code)}`;
+  },
+  freeplay(step, el){
+    el.innerHTML = `<p class="say" role="status">${step.text}</p>
+      <div class="keyshow dim" id="keyshow">?</div>${kbScene()}
+      <button class="big-btn green" id="doneBtn" type="button">다 했어요 ✅</button>`;
+    $('#doneBtn').onclick = e => { e.currentTarget.blur(); winStep(); };
+  },
+};
+
+/* ===== 키 입력 (전역 1개) ===== */
+function showKey(lab){
+  const ks = $('#keyshow');
+  if(!ks) return;
+  ks.textContent = lab;
+  ks.classList.remove('dim','pop3');
+  void ks.getBoundingClientRect();
+  ks.classList.add('pop3');
+}
+const KEYRUN = {
+  anykey(step, e){
+    const lab = keyLabel(e);
+    if(!lab) return;
+    showKey(lab);
+    speak(lab.split('  ')[0]);
+    S.rep++;
+    stage.querySelector('.reps').outerHTML = repsHtml(Math.min(S.rep, step.reps), step.reps);
+    if(S.rep >= step.reps) setTimeout(winStep, 1100);
+  },
+  targetkey(step, e){
+    const lab = keyLabel(e);
+    if(!lab) return;
+    showKey(lab);
+    if(e.code === step.code) winStep();
+    else speak(step.wrongTts);
+  },
+  freeplay(step, e){
+    const lab = keyLabel(e);
+    if(!lab) return;
+    showKey(lab);
+    speak(lab.split('  ')[0]);
+  },
+};
+window.addEventListener('keydown', e => {
+  if(S.screen !== 'play' || S.mi < 0) return;
+  const step = MODULES[S.mi].steps[S.si];
+  const h = KEYRUN[step.type];
+  if(!h) return;
+  if(e.ctrlKey || e.altKey || e.metaKey) return;
+  e.preventDefault();
+  if(e.repeat || busy) return;
+  h(step, e);
+});
+
+goHome();
+</script>
+</body>
+</html>
