@@ -1,17 +1,22 @@
 # 디지털 기초 수업 실습 앱 (digitalbasic)
 
-발달장애 성인 대상 "디지털 기초" 수업용 실습 웹앱. 1차시: 전원 켜고 끄기 · 마우스 · 키보드.
+발달장애 성인 대상 "디지털 기초" 수업용 실습 웹앱.
+1차시: 전원 켜고 끄기 · 마우스 · 키보드. 2차시: 키보드 위치 찾기.
 
 ## 핵심 파일
 
-- `lesson1.html` — 앱 전체 (단일 자체완결 HTML, 인라인 CSS/JS/SVG). **유일한 소스.**
+- `index.html` — 차시 선택 화면 (1차시/2차시 카드). 리다이렉트 아님.
+- `lesson1.html` — 1차시 (단일 자체완결 HTML, 인라인 CSS/JS/SVG).
+- `lesson2.html` — 2차시. lesson1의 셸(헤더·TTS·볼륨·진행 점·칭찬·축하)을 복사해 만들었고, 스텝 타입은 `info`/`findkey` 두 개뿐.
 - `마우스배우기.html` — 폐기된 옛 버전. 수정하지 말 것 (참고용).
+
+각 차시는 독립된 자체완결 파일. 셸 코드가 중복되지만 의도된 선택 — 한 차시 수정이 다른 차시를 깨뜨리지 않는다.
 
 ## 저장소·배포 (중요)
 
 - GitHub: **https://github.com/HYUNMINJU/digitalbasic** (main 브랜치)
 - 학생 접속 주소(GitHub Pages, 기본): **https://hyunminju.github.io/digitalbasic/**
-  - 배포 방법: main에 커밋 후 push하면 자동 배포 (1분 내외). `index.html`은 lesson1.html로 리다이렉트.
+  - 배포 방법: main에 커밋 후 push하면 자동 배포 (1분 내외). `index.html`이 차시 선택 화면.
 - 보조 주소(Artifact): https://claude.ai/code/artifact/c25ca8eb-fbd2-4ba9-938a-86858f291d6a
   - 재게시 시: lesson1.html에서 `<!doctype html>`/`<html>`/`<head>`/`<meta>`/`<body>` 계열 래퍼 태그 줄만 제거한 사본을 Artifact 도구로 게시하되, **반드시 `url` 파라미터에 위 주소를 넘겨 같은 주소 유지**.
 - 수정 완료 시 커밋·push까지 해야 학생 주소에 반영됨.
@@ -35,4 +40,5 @@
 - Playwright MCP는 file:// 차단 → `python -m http.server 8737` 후 `http://localhost:8737/lesson1.html`
 - TTS는 헤드리스에서 안 들림 → 콘솔 `[tts]` 로그로 문구 확인
 - 확인 크기: 1920×1080(프로젝터) / 1366×768(수업 노트북) / 1024×600
-- 진행 기록: localStorage `digibasic_l1_v1`(모듈 완료), `digibasic_vol`(소리 설정)
+  - **1024×600이 관문**: 2차시 화면 키보드는 5행(숫자행 포함)이라 세로가 빠듯하다. 키보드 하단이 잘리지 않는지 반드시 확인.
+- 진행 기록: localStorage `digibasic_l1_v1`·`digibasic_l2_v1`(차시별 모듈 완료), `digibasic_vol`(소리 설정, 차시 공유)

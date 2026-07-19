@@ -1,0 +1,496 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>디지털 기초 2차시 — 키보드와 친해지기</title>
+<style>
+:root{
+  --bg:#F4F6FA; --ink:#191F28; --sub:#6B7684; --card:#FFFFFF;
+  --accent:#3182F6; --accent-deep:#1B64DA; --accent-soft:#EBF3FF;
+  --green:#0BA360; --green-soft:#E6F6EC; --sun:#FFC342;
+  --hair:rgba(25,31,40,.07);
+  --shadow-sm:0 1px 3px rgba(25,31,40,.05), 0 4px 14px rgba(25,31,40,.06);
+  --shadow-md:0 2px 6px rgba(25,31,40,.05), 0 14px 34px rgba(25,31,40,.10);
+  color-scheme: light;
+}
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+html,body{margin:0; height:100%;}
+body{
+  font-family:"Pretendard Variable",Pretendard,"Malgun Gothic","맑은 고딕","Apple SD Gothic Neo","Noto Sans KR",sans-serif;
+  background:var(--bg); color:var(--ink);
+  display:flex; flex-direction:column;
+  min-height:100vh; min-height:100dvh;
+  touch-action:manipulation;
+  -webkit-user-select:none; user-select:none;
+}
+button{font:inherit; color:inherit; cursor:pointer; border:none; background:none;}
+button:focus-visible{outline:4px solid #94C1FF; outline-offset:3px;}
+
+/* ===== 셸 ===== */
+header{
+  display:flex; align-items:center; gap:14px;
+  padding:14px 22px; background:var(--card);
+  box-shadow:0 1px 0 var(--hair), 0 4px 16px rgba(25,31,40,.04);
+  position:relative; z-index:5;
+}
+#title{
+  flex:1; text-align:center; font-weight:800;
+  font-size:clamp(20px,2.2vw,30px); letter-spacing:-.5px;
+}
+.hbtn{
+  min-height:68px; padding:10px 26px; border-radius:999px;
+  background:#F2F4F8; font-weight:700;
+  font-size:clamp(17px,1.7vw,24px);
+  transition:background .15s ease, transform .1s ease;
+}
+.hbtn:hover{background:#E8ECF2;}
+.hbtn:active{transform:scale(.96);}
+
+main#stage{
+  flex:1; min-height:0; overflow:auto;
+  display:flex; flex-direction:column; align-items:center;
+  padding:20px 22px;
+}
+footer#dots{
+  display:flex; align-items:center; justify-content:center; gap:10px; padding:16px;
+  flex-wrap:wrap;
+}
+footer#dots:empty{display:none;}
+.d{width:13px; height:13px; border-radius:999px; background:#D8DEE8; transition:all .25s ease;}
+.d.done{background:var(--green);}
+.d.cur{width:38px; background:var(--accent);}
+
+/* ===== 지시문 ===== */
+.say{
+  margin:8px 0 18px; text-align:center; font-weight:800;
+  font-size:clamp(26px,3.4vw,44px); letter-spacing:-1px; text-wrap:balance;
+}
+
+/* ===== 홈 ===== */
+.home{width:100%; max-width:1500px; text-align:center; margin:auto;}
+.home h1{font-size:clamp(30px,3.8vw,52px); font-weight:800; letter-spacing:-1.5px;}
+.cards{display:flex; gap:26px; justify-content:center; flex-wrap:wrap; margin-top:34px;}
+.card{
+  position:relative; width:min(350px,90vw); min-height:300px;
+  background:var(--card); border-radius:32px;
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:22px;
+  box-shadow:var(--shadow-sm);
+  transition:transform .18s ease, box-shadow .18s ease;
+}
+.card:hover{transform:translateY(-6px); box-shadow:var(--shadow-md);}
+.card:active{transform:translateY(0) scale(.98);}
+.cicon{
+  width:140px; height:140px; border-radius:50%; background:var(--accent-soft);
+  display:flex; align-items:center; justify-content:center;
+  font-size:72px; line-height:1;
+}
+.cname{font-size:clamp(23px,2.3vw,32px); font-weight:800; letter-spacing:-.5px;}
+.badge{
+  position:absolute; top:18px; right:18px; background:var(--green-soft); color:#087F46;
+  border-radius:999px; padding:9px 18px; font-weight:800; font-size:17px;
+}
+
+/* ===== 큰 버튼 ===== */
+.big-btn{
+  flex:none;
+  min-height:92px; min-width:280px; padding:18px 52px; margin-top:24px;
+  border-radius:999px;
+  background:var(--accent); color:#fff; font-weight:800;
+  font-size:clamp(23px,2.5vw,34px); letter-spacing:-.5px;
+  box-shadow:0 10px 26px rgba(49,130,246,.35);
+  transition:transform .12s ease, box-shadow .12s ease, filter .12s ease;
+}
+.big-btn:hover{filter:brightness(1.06);}
+.big-btn:active{transform:translateY(2px) scale(.98); box-shadow:0 5px 14px rgba(49,130,246,.3);}
+.big-btn.green{background:var(--green); box-shadow:0 10px 26px rgba(11,163,96,.35);}
+.big-btn.green:active{box-shadow:0 5px 14px rgba(11,163,96,.3);}
+
+/* ===== 무대 공통 ===== */
+.scene{
+  flex:1; width:100%; max-width:1200px; min-height:0;
+  display:flex; align-items:center; justify-content:center; gap:28px;
+}
+.pulse{animation:pulse 1.3s ease-in-out infinite; transform-box:fill-box; transform-origin:center;}
+@keyframes pulse{0%,100%{transform:scale(1);}50%{transform:scale(1.12);}}
+.hint{animation:hintblink .7s ease-in-out 4; transform-box:fill-box; transform-origin:center;}
+@keyframes hintblink{0%,100%{filter:none;}50%{filter:drop-shadow(0 0 18px var(--sun)) brightness(1.25);}}
+@media (prefers-reduced-motion:reduce){.pulse,.hint{animation:none;}}
+
+/* ===== 칭찬 오버레이 ===== */
+#praise{
+  position:fixed; inset:0; z-index:50; display:flex; align-items:center; justify-content:center;
+  background:rgba(255,255,255,.94); backdrop-filter:blur(6px);
+}
+#praise[hidden]{display:none;}
+#praise .pop{
+  text-align:center; font-size:clamp(44px,7vw,88px); font-weight:800; letter-spacing:-2px;
+  color:var(--green); animation:popin .45s cubic-bezier(.2,1.6,.4,1);
+}
+#praise .pop .pe{font-size:clamp(80px,13vw,170px); display:block;}
+@keyframes popin{from{transform:scale(.3); opacity:0;}to{transform:scale(1); opacity:1;}}
+
+/* ===== 소개 카드 ===== */
+.introrow{flex-wrap:wrap;}
+.np-card{
+  flex:1; min-width:280px; max-width:440px; background:var(--card);
+  border-radius:28px; padding:30px; text-align:center; box-shadow:var(--shadow-sm);
+}
+.np-card p{font-size:clamp(21px,2.3vw,30px); font-weight:800; margin:12px 0 0; letter-spacing:-.5px;}
+.np-card .art{font-size:74px;}
+
+/* ===== 찾을 글자 =====
+   키보드가 화면 밖으로 밀리지 않도록 vh 기준으로 묶어 둔다.
+   1366×768에서 스페이스 행이 잘리던 문제 때문에 값이 빡빡하다. */
+.findbig{
+  min-height:clamp(70px,11vh,120px); width:min(92vw,760px); margin:0 auto;
+  background:var(--accent-soft); border-radius:24px;
+  display:flex; align-items:center; justify-content:center; gap:16px;
+  font-size:clamp(40px,6.4vh,86px); font-weight:800; color:var(--accent-deep);
+  text-align:center; padding:8px 18px; letter-spacing:-2px;
+}
+.findbig .lens{font-size:.55em; filter:none;}
+
+/* ===== 키보드 ===== */
+.keyshow{
+  min-height:clamp(56px,9vh,104px); width:min(92vw,760px); margin:9px auto 0;
+  background:var(--card); border-radius:22px; box-shadow:var(--shadow-sm);
+  display:flex; align-items:center; justify-content:center;
+  font-size:clamp(32px,5.6vh,72px); font-weight:800; color:var(--accent-deep);
+  text-align:center; padding:8px;
+}
+.keyshow.dim{color:#C6CDD9;}
+.keyshow.pop3{animation:keypop .3s ease;}
+@keyframes keypop{50%{transform:scale(1.1);}}
+.kb{
+  display:flex; flex-direction:column; gap:6px; margin:10px auto 0;
+  background:#E9EDF4; border-radius:20px; padding:11px;
+  width:min(94vw,880px); box-shadow:var(--shadow-sm); flex:none;
+}
+.kb-row{display:flex; gap:6px; justify-content:center;}
+.key{
+  flex:1; max-width:66px; min-width:0; aspect-ratio:auto;
+  min-height:clamp(32px,5.4vh,58px);
+  background:var(--card); border-radius:11px;
+  box-shadow:0 2px 0 #D0D7E2;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  font-weight:700; font-size:clamp(9px,1.3vw,14px); color:var(--sub);
+}
+.key b{font-size:clamp(13px,1.9vw,20px); color:var(--ink);}
+.key.wide{max-width:140px;}
+.key.space{flex:6; max-width:440px;}
+.key.kb-target{background:var(--accent); box-shadow:0 2px 0 var(--accent-deep); color:#fff;}
+.key.kb-target b{color:#fff;}
+.key.hint{animation:keyhint .7s ease-in-out 4;}
+@keyframes keyhint{0%,100%{box-shadow:0 2px 0 var(--accent-deep);}
+  50%{box-shadow:0 2px 0 var(--accent-deep), 0 0 0 7px var(--sun);}}
+@media (prefers-reduced-motion:reduce){.key.hint{animation:none;}}
+
+/* 인트로용 축소 키보드 */
+.kb.mini{width:min(88vw,420px); padding:9px; gap:5px; margin:0 auto; transform:none;}
+.kb.mini .key{min-height:30px; max-width:38px; font-size:9px;}
+.kb.mini .key b{font-size:12px;}
+.kb.mini .key.wide{max-width:60px;}
+.kb.mini .key.space{max-width:200px;}
+.pointfinger{font-size:56px; line-height:1; display:block; margin-top:6px;}
+
+/* ===== 축하 ===== */
+.confetti{position:fixed; inset:0; pointer-events:none; overflow:hidden; z-index:1;}
+.confetti span{position:absolute; top:-60px; font-size:36px; animation:fall linear infinite;}
+@keyframes fall{to{transform:translateY(115vh) rotate(340deg);}}
+@media (prefers-reduced-motion:reduce){.confetti span{animation:none; display:none;}}
+.fin-sub{font-size:clamp(20px,2.2vw,30px); font-weight:700; color:var(--sub); margin:0 0 10px; line-height:1.7;}
+.celebrate{text-align:center; margin:auto; position:relative; z-index:2;}
+.celebrate .ce{font-size:clamp(90px,14vw,180px); line-height:1.1; display:block;
+  filter:drop-shadow(0 14px 24px rgba(255,195,66,.4));}
+.celebrate h2{font-size:clamp(32px,4.2vw,56px); font-weight:800; letter-spacing:-1.5px; color:var(--green); margin:16px 0 8px;}
+.celebrate .btns{display:flex; gap:18px; justify-content:center; flex-wrap:wrap;}
+
+@media (max-width:700px){
+  .scene{flex-direction:column;}
+  .hbtn{min-height:58px; padding:8px 16px;}
+}
+@media (max-height:760px){
+  .say{margin:2px 0 10px; font-size:clamp(22px,3vw,34px);}
+  .findbig{min-height:74px; font-size:clamp(40px,7vh,78px); margin-bottom:2px;}
+  .keyshow{min-height:64px; font-size:clamp(34px,6.5vh,68px); margin-top:8px;}
+  .key{min-height:34px;}
+  .kb{gap:5px; padding:9px; margin-top:10px;}
+  .big-btn{min-height:76px; margin-top:14px;}
+  .np-card{padding:16px;}
+  .np-card .art{font-size:52px;}
+  footer#dots{padding:8px;}
+}
+</style>
+</head>
+<body>
+<header>
+  <button class="hbtn" id="homeBtn" type="button">🏠 처음으로</button>
+  <div id="title">키보드와 친해지기</div>
+  <button class="hbtn" id="volBtn" type="button" aria-label="소리 조절">🔊</button>
+  <button class="hbtn" id="ttsBtn" type="button">💬 다시 듣기</button>
+</header>
+<main id="stage"></main>
+<footer id="dots"></footer>
+<div id="praise" hidden></div>
+
+<script>
+'use strict';
+const $ = s => document.querySelector(s);
+const stage = $('#stage'), dots = $('#dots');
+
+/* ===== 음성 (TTS) ===== */
+let koVoice = null, lastTts = '';
+function pickVoice(){
+  try{ koVoice = speechSynthesis.getVoices().find(v => v.lang.replace('_','-').startsWith('ko')) || null; }catch(e){}
+}
+try{ speechSynthesis.onvoiceschanged = pickVoice; pickVoice(); }catch(e){}
+const VOLS = [
+  {v:1,   icon:'🔊', name:'소리 크게'},
+  {v:.35, icon:'🔉', name:'소리 작게'},
+  {v:0,   icon:'🔇', name:'소리 끔'},
+];
+let volIdx = 0;
+try{ volIdx = (+localStorage.getItem('digibasic_vol') || 0) % 3; }catch(e){}
+function updateVolBtn(){
+  const s = VOLS[volIdx];
+  $('#volBtn').textContent = s.icon;
+  $('#volBtn').setAttribute('aria-label', s.name);
+}
+$('#volBtn').onclick = e => {
+  e.currentTarget.blur();
+  volIdx = (volIdx + 1) % 3;
+  try{ localStorage.setItem('digibasic_vol', volIdx); }catch(e2){}
+  updateVolBtn();
+  speak(VOLS[volIdx].name + '로 바꿨어요');
+};
+function speak(t){
+  if(!t) return;
+  lastTts = t;
+  console.log('[tts]', t);
+  if(!VOLS[volIdx].v) return;
+  try{
+    speechSynthesis.cancel();
+    setTimeout(() => {
+      const u = new SpeechSynthesisUtterance(t);
+      u.lang = 'ko-KR'; u.rate = .85; u.pitch = 1.02;
+      u.volume = VOLS[volIdx].v;
+      if(koVoice) u.voice = koVoice;
+      speechSynthesis.speak(u);
+    }, 60);
+  }catch(e){}
+}
+updateVolBtn();
+document.addEventListener('pointerdown', () => {
+  try{ speechSynthesis.speak(new SpeechSynthesisUtterance(' ')); }catch(e){}
+}, {once:true});
+$('#ttsBtn').onclick = e => { e.currentTarget.blur(); speak(lastTts); };
+
+/* ===== 진행 상태 ===== */
+const KEY = 'digibasic_l2_v1';
+let done = {};
+try{ done = JSON.parse(localStorage.getItem(KEY)) || {}; }catch(e){}
+function saveDone(id){ done[id] = true; try{ localStorage.setItem(KEY, JSON.stringify(done)); }catch(e){} }
+const S = { screen:'home', mi:-1, si:0, rep:0 };
+let busy = false;
+
+/* ===== 키보드 그림 ===== */
+const KO = {Q:'ㅂ',W:'ㅈ',E:'ㄷ',R:'ㄱ',T:'ㅅ',Y:'ㅛ',U:'ㅕ',I:'ㅑ',O:'ㅐ',P:'ㅔ',
+            A:'ㅁ',S:'ㄴ',D:'ㅇ',F:'ㄹ',G:'ㅎ',H:'ㅗ',J:'ㅓ',K:'ㅏ',L:'ㅣ',
+            Z:'ㅋ',X:'ㅌ',C:'ㅊ',V:'ㅍ',B:'ㅠ',N:'ㅜ',M:'ㅡ'};
+function kbScene(target, cls){
+  const hl = code => code === target ? ' kb-target pulse' : '';
+  const k = L => `<span class="key${hl('Key'+L)}" data-code="Key${L}"><b>${KO[L]}</b>${L}</span>`;
+  const n = D => `<span class="key${hl('Digit'+D)}" data-code="Digit${D}"><b>${D}</b></span>`;
+  return `<div class="kb ${cls||''}" aria-hidden="true">
+    <div class="kb-row">${'1234567890'.split('').map(n).join('')}</div>
+    <div class="kb-row">${'QWERTYUIOP'.split('').map(k).join('')}</div>
+    <div class="kb-row">${'ASDFGHJKL'.split('').map(k).join('')}<span class="key wide${hl('Enter')}" data-code="Enter"><b>엔터 ⏎</b></span></div>
+    <div class="kb-row">${'ZXCVBNM'.split('').map(k).join('')}</div>
+    <div class="kb-row"><span class="key space${hl('Space')}" data-code="Space"><b>스페이스</b></span></div>
+  </div>`;
+}
+const KEYNAMES = {Space:'스페이스',Enter:'엔터',Backspace:'지우기',Tab:'탭',Escape:'나가기',
+  CapsLock:'캡스락',ShiftLeft:'시프트',ShiftRight:'시프트',
+  ArrowUp:'위쪽 ↑',ArrowDown:'아래쪽 ↓',ArrowLeft:'왼쪽 ←',ArrowRight:'오른쪽 →',
+  Lang1:'한/영',Lang2:'한자',HangulMode:'한/영'};
+function keyLabel(e){
+  const c = e.code;
+  if(c.startsWith('Key')){ const L = c[3]; return KO[L] ? KO[L]+'  '+L : L; }
+  if(c.startsWith('Digit')) return c.slice(5);
+  if(KEYNAMES[c]) return KEYNAMES[c];
+  return (e.key && e.key.length === 1 && e.key !== ' ') ? e.key : '';
+}
+
+const sceneFindIntro = () => `<div class="scene introrow">
+  <div class="np-card"><div class="art">🔍⌨️</div><p>파란색으로 반짝이는<br>키를 찾아요</p></div>
+  <div class="np-card">
+    ${kbScene('KeyK','mini')}
+    <span class="pointfinger" aria-hidden="true">👆</span>
+    <p>진짜 키보드에서<br>같은 자리를 눌러요</p>
+  </div>
+</div>`;
+
+/* ===== 학습 내용 (단일 데이터) ===== */
+const MODULES = [
+  { id:'findkey', title:'키보드 위치 찾기', icon:'🔍', doneMsg:'키보드 위치 박사가 되었어요!', steps:[
+    { type:'info', scene:sceneFindIntro, text:'화면에서 반짝이는 키를 찾아 눌러요' },
+    /* 1단계 — 큰 키 (워밍업) */
+    { type:'findkey', code:'Space', label:'스페이스', text:'제일 긴 키를 눌러 보세요' },
+    { type:'findkey', code:'Enter', label:'엔터', text:'엔터 키를 눌러 보세요' },
+    /* 2단계 — 가운데 줄 */
+    { type:'findkey', code:'KeyK', label:'ㅏ', text:'ㅏ 를 찾아 눌러 보세요' },
+    { type:'findkey', code:'KeyD', label:'ㅇ', text:'ㅇ 를 찾아 눌러 보세요' },
+    { type:'findkey', code:'KeyS', label:'ㄴ', text:'ㄴ 를 찾아 눌러 보세요' },
+    /* 3단계 — 윗줄 */
+    { type:'findkey', code:'KeyR', label:'ㄱ', text:'ㄱ 를 찾아 눌러 보세요' },
+    { type:'findkey', code:'KeyQ', label:'ㅂ', text:'ㅂ 를 찾아 눌러 보세요' },
+    /* 4단계 — 아랫줄 */
+    { type:'findkey', code:'KeyM', label:'ㅡ', text:'ㅡ 를 찾아 눌러 보세요' },
+    { type:'findkey', code:'KeyC', label:'ㅊ', text:'ㅊ 를 찾아 눌러 보세요' },
+    /* 5단계 — 숫자 */
+    { type:'findkey', code:'Digit1', label:'1', text:'숫자 1 을 찾아 눌러 보세요' },
+    { type:'findkey', code:'Digit5', label:'5', text:'숫자 5 를 찾아 눌러 보세요' },
+    { type:'findkey', code:'Digit0', label:'0', text:'숫자 0 을 찾아 눌러 보세요' },
+  ]},
+];
+
+/* ===== 칭찬 ===== */
+const PRAISES = ['참 잘했어요!','정말 멋져요!','최고예요!','아주 잘했어요!'];
+const CHEERS = ['좋아요!','잘했어요!','우와, 멋져요!'];
+let praiseN = 0, cheerN = 0;
+function praise(cb){
+  const t = PRAISES[praiseN++ % PRAISES.length];
+  $('#praise').innerHTML = `<div class="pop"><span class="pe">🎉</span>${t}</div>`;
+  $('#praise').hidden = false;
+  speak(t);
+  setTimeout(() => { $('#praise').hidden = true; cb && cb(); }, 1800);
+}
+function cheer(){ speak(CHEERS[cheerN++ % CHEERS.length]); }
+
+/* ===== 진행/화면 전환 ===== */
+function renderDots(){
+  const m = MODULES[S.mi];
+  dots.innerHTML = (S.screen === 'play' && m)
+    ? m.steps.map((_,i) => `<span class="d ${i < S.si ? 'done' : i === S.si ? 'cur' : ''}"></span>`).join('')
+    : '';
+}
+function runStep(){
+  const m = MODULES[S.mi], step = m.steps[S.si];
+  S.rep = 0; S.screen = 'play';
+  stage.onclick = null;
+  renderDots();
+  speak(step.text);
+  RUN[step.type](step, stage);
+}
+function nextStep(){
+  const m = MODULES[S.mi];
+  if(S.si >= m.steps.length - 1){ saveDone(m.id); celebrate(m); }
+  else { S.si++; runStep(); }
+}
+function winStep(){
+  if(busy) return;
+  busy = true;
+  praise(() => { busy = false; nextStep(); });
+}
+/* 모듈이 1개뿐이라 완주 = 곧 오늘 공부 끝. 바로 finale로 간다.
+   (done 맵을 보고 판단하면 재방문 시 첫 화면부터 finale이 떠 버린다) */
+function celebrate(m){
+  S.screen = 'celebrate';
+  stage.onclick = null;
+  renderDots();
+  finale();
+}
+function finale(){
+  const E = ['🎉','🎊','⭐','🌸'];
+  const conf = Array.from({length:16}, (_, i) =>
+    `<span style="left:${(i * 6.3 + 2) % 96}%; animation-duration:${2.6 + (i % 5) * .5}s; animation-delay:${(i % 7) * .45}s">${E[i % 4]}</span>`).join('');
+  stage.innerHTML = `<div class="confetti" aria-hidden="true">${conf}</div>
+    <div class="celebrate">
+      <span class="ce">🎓</span>
+      <h2>키보드 위치를 다 익혔어요!</h2>
+      <p class="fin-sub">긴 키 ✅&ensp;자음 모음 ✅&ensp;숫자 ✅<br>정말 대단해요!</p>
+      <div class="btns">
+        <button class="big-btn green" id="againBtn" type="button">🔄 한 번 더</button>
+        <button class="big-btn" id="homeBtn2" type="button">🏠 처음으로</button>
+      </div>
+    </div>`;
+  speak('와! 키보드 위치를 모두 익혔어요. 정말 대단해요!');
+  $('#againBtn').onclick = () => { S.si = 0; runStep(); };
+  $('#homeBtn2').onclick = goHome;
+}
+function startModule(i){
+  S.mi = i; S.si = 0;
+  $('#title').textContent = MODULES[i].title;
+  runStep();
+}
+function goHome(){
+  S.screen = 'home'; S.mi = -1;
+  stage.onclick = null;
+  try{ speechSynthesis.cancel(); }catch(e){}
+  $('#title').textContent = '키보드와 친해지기';
+  renderDots();
+  stage.innerHTML = `<div class="home">
+    <h1>무엇을 해 볼까요?</h1>
+    <div class="cards">${MODULES.map((m,i) => `
+      <button class="card" data-i="${i}" type="button">
+        ${done[m.id] ? '<span class="badge">✅ 해냈어요</span>' : ''}
+        <span class="cicon">${m.icon}</span>
+        <span class="cname">${m.title}</span>
+      </button>`).join('')}
+    </div>
+  </div>`;
+  lastTts = '하고 싶은 공부를 눌러 보세요.';
+  stage.querySelectorAll('.card').forEach(c => c.onclick = () => startModule(+c.dataset.i));
+}
+$('#homeBtn').onclick = e => { e.currentTarget.blur(); goHome(); };
+
+/* ===== 단계 실행기 ===== */
+const RUN = {
+  info(step, el){
+    el.innerHTML = `<p class="say" role="status">${step.text}</p>${step.scene()}
+      <button class="big-btn" id="nextBtn" type="button">다음 ▶</button>`;
+    $('#nextBtn').onclick = e => { e.currentTarget.blur(); nextStep(); };
+  },
+  findkey(step, el){
+    el.innerHTML = `<p class="say" role="status">${step.text}</p>
+      <div class="findbig" aria-hidden="true"><span class="lens">🔍</span>${step.label}</div>
+      <div class="keyshow dim" id="keyshow">?</div>${kbScene(step.code)}`;
+  },
+};
+
+/* ===== 키 입력 (전역 1개) ===== */
+function showKey(lab){
+  const ks = $('#keyshow');
+  if(!ks) return;
+  ks.textContent = lab;
+  ks.classList.remove('dim','pop3');
+  void ks.getBoundingClientRect();
+  ks.classList.add('pop3');
+}
+const KEYRUN = {
+  findkey(step, e){
+    const lab = keyLabel(e);
+    if(!lab) return;
+    showKey(lab);
+    if(e.code === step.code){ winStep(); return; }
+    speak(step.wrongTts || '괜찮아요. 반짝이는 키를 찾아보세요.');
+    const t = stage.querySelector('.kb-target');
+    if(t){ t.classList.remove('hint'); void t.getBoundingClientRect(); t.classList.add('hint'); }
+  },
+};
+window.addEventListener('keydown', e => {
+  if(S.screen !== 'play' || S.mi < 0) return;
+  const step = MODULES[S.mi].steps[S.si];
+  const h = KEYRUN[step.type];
+  if(!h) return;
+  if(e.ctrlKey || e.altKey || e.metaKey) return;
+  e.preventDefault();
+  if(e.repeat || busy) return;
+  h(step, e);
+});
+
+goHome();
+</script>
+</body>
+</html>
