@@ -42,16 +42,16 @@ h1{font-size:clamp(30px,3.8vw,52px); font-weight:800; letter-spacing:-1.5px; tex
 .cnum{font-size:clamp(17px,1.8vw,22px); font-weight:800; color:var(--accent);}
 .cname{font-size:clamp(23px,2.3vw,32px); font-weight:800; letter-spacing:-.5px; padding:0 12px; text-align:center;}
 @media (prefers-reduced-motion:reduce){.card{transition:none;}}
-/* 카드가 3장이 되면서 1024×600·1366×768에서 셋째 장이 아래로 밀린다.
+/* 카드가 4장이 되면서 1024×600·1366×768에서 뒤쪽 장이 아래로 밀린다.
    한 줄에 다 들어가도록 세로가 짧은 화면에서 카드를 줄인다. */
 @media (max-height:860px){
-  body{padding:16px;}
-  h1{font-size:clamp(26px,3vw,38px);}
-  .cards{gap:18px; margin-top:22px; flex-wrap:nowrap;}
-  .card{width:min(270px,30vw); min-height:220px; gap:14px; border-radius:26px;}
-  .cicon{width:100px; height:100px; font-size:52px;}
-  .cnum{font-size:17px;}
-  .cname{font-size:clamp(19px,1.9vw,24px);}
+  body{padding:14px;}
+  h1{font-size:clamp(24px,2.8vw,34px);}
+  .cards{gap:14px; margin-top:18px; flex-wrap:nowrap;}
+  .card{width:min(220px,23vw); min-height:200px; gap:12px; border-radius:24px; padding:10px;}
+  .cicon{width:86px; height:86px; font-size:44px;}
+  .cnum{font-size:16px;}
+  .cname{font-size:clamp(17px,1.7vw,21px);}
 }
 @media (max-width:760px){
   .cards{flex-wrap:wrap;}
@@ -76,6 +76,11 @@ h1{font-size:clamp(30px,3.8vw,52px); font-weight:800; letter-spacing:-1.5px; tex
     <span class="cicon">🤖</span>
     <span class="cnum">3차시</span>
     <span class="cname">AI는 어떻게 배울까요?</span>
+  </a>
+  <a class="card" href="lesson4.html">
+    <span class="cicon">💬</span>
+    <span class="cnum">4차시</span>
+    <span class="cname">AI와 이야기 나누기</span>
   </a>
 </div>
 </body>
