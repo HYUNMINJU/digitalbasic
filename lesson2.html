@@ -186,12 +186,13 @@ footer#dots:empty{display:none;}
   50%{box-shadow:0 2px 0 var(--accent-deep), 0 0 0 7px var(--sun);}}
 @media (prefers-reduced-motion:reduce){.key.hint{animation:none;}}
 
-/* 인트로용 축소 키보드 */
-.kb.mini{width:min(88vw,420px); padding:9px; gap:5px; margin:0 auto; transform:none;}
-.kb.mini .key{min-height:30px; max-width:38px; font-size:9px;}
-.kb.mini .key b{font-size:12px;}
-.kb.mini .key.wide{max-width:60px;}
-.kb.mini .key.space{max-width:200px;}
+/* 인트로용 축소 키보드 — 카드 안에 들어가야 하므로 vw가 아닌 100%로 묶는다 */
+.kb.mini{width:100%; max-width:100%; padding:8px; gap:4px; margin:0 auto; transform:none;}
+.kb.mini .kb-row{gap:4px;}
+.kb.mini .key{min-height:26px; max-width:30px; font-size:8px; border-radius:7px;}
+.kb.mini .key b{font-size:11px;}
+.kb.mini .key.wide{max-width:48px;}
+.kb.mini .key.space{max-width:150px;}
 .pointfinger{font-size:56px; line-height:1; display:block; margin-top:6px;}
 
 /* ===== 축하 ===== */
