@@ -515,12 +515,21 @@ function saveDone(id){ done[id] = true; try{ localStorage.setItem(KEY, JSON.stri
 const S = { screen:'home', mi:-1, si:0, sel:null, groups:null, feats:null };
 let busy = false;
 
-/* ===== 사진 데이터 (단일 소스) =====
-   종류(kind)와 털색(tone)을 일부러 교차시켰다.
-   그래야 비지도학습에서 '강아지/고양이'로도, '밝은색/어두운색'으로도 나눌 수 있고
+/* ===== 사진 데이터 =====
+   지도학습과 비지도학습에 서로 다른 동물을 쓴다.
+   같은 8장을 세 화면 내리 보면 지루하기도 하고, 더 나쁜 건
+   학습자가 앞에서 낸 답("강아지 여기, 고양이 저기")을 그대로 되풀이해서
+   '비슷한 점 찾기'를 안 하게 된다는 것이다.
+
+   두 세트 모두 종류(kind)와 털색(tone)을 일부러 교차시켰다.
+   그래야 종류로도, 밝은색/어두운색으로도, 자세로도 나눌 수 있고
    마지막 '어떤 특징을 보았나요?' 질문이 의미를 갖는다.
+   한쪽으로만 깔끔하게 나뉘면 비지도학습이 '정답 맞추기'가 되어 버린다.
+
    images/ 사진이 없으면 이모지로 자동 대체된다(문서 요구사항). */
-const PHOTOS = [
+
+/* 지도학습용 — 이름표(강아지/고양이)를 보고 고른다 */
+const PHOTOS_SUP = [
   {id:'ai01', kind:'dog', tone:'light', emoji:'🐶', alt:'밝은 색 강아지'},
   {id:'ai02', kind:'cat', tone:'light', emoji:'🐱', alt:'밝은 색 고양이'},
   {id:'ai03', kind:'dog', tone:'dark',  emoji:'🐕', alt:'어두운 색 강아지'},
@@ -530,8 +539,20 @@ const PHOTOS = [
   {id:'ai07', kind:'dog', tone:'dark',  emoji:'🦮', alt:'어두운 색 강아지'},
   {id:'ai08', kind:'cat', tone:'dark',  emoji:'🐈‍⬛', alt:'어두운 색 고양이'},
 ];
+/* 비지도학습용 — 이름표 없이 스스로 나눈다. 토끼·햄스터라 앞 답을 못 베낀다 */
+const PHOTOS_UNSUP = [
+  {id:'un01', kind:'rabbit',  tone:'light', emoji:'🐰', alt:'동물 사진'},
+  {id:'un02', kind:'hamster', tone:'light', emoji:'🐹', alt:'동물 사진'},
+  {id:'un03', kind:'rabbit',  tone:'dark',  emoji:'🐇', alt:'동물 사진'},
+  {id:'un04', kind:'hamster', tone:'dark',  emoji:'🐹', alt:'동물 사진'},
+  {id:'un05', kind:'rabbit',  tone:'light', emoji:'🐰', alt:'동물 사진'},
+  {id:'un06', kind:'hamster', tone:'light', emoji:'🐹', alt:'동물 사진'},
+  {id:'un07', kind:'rabbit',  tone:'dark',  emoji:'🐇', alt:'동물 사진'},
+  {id:'un08', kind:'hamster', tone:'dark',  emoji:'🐹', alt:'동물 사진'},
+];
 const KIND_NAME = {dog:'강아지', cat:'고양이'};
-const photoById = id => PHOTOS.find(p => p.id === id);
+const photoById = id =>
+  PHOTOS_SUP.find(p => p.id === id) || PHOTOS_UNSUP.find(p => p.id === id);
 
 /* 사진 한 장의 HTML.
    labeled=true(지도학습)면 이름표를 보여주고 alt에도 종류를 적는다.
@@ -554,8 +575,8 @@ const sceneSupIntro = () => `<div class="scene introrow">
   <div class="np-card"><div class="art">🤖✅</div><p>정답을 알려주면서<br>AI를 가르쳐요</p></div>
 </div>`;
 const sceneUnsupIntro = () => `<div class="scene introrow">
-  <div class="np-card"><div class="art">❓🐾</div><p>이번에는 이름표가<br>없어요</p></div>
-  <div class="np-card"><div class="art">🧩</div><p>비슷한 것끼리<br>모아 볼까요?</p></div>
+  <div class="np-card"><div class="art">🐰🐹</div><p>새로운 동물 친구가<br>왔어요</p></div>
+  <div class="np-card"><div class="art">❓🧩</div><p>이름표가 없어요<br>비슷한 것끼리 모아요</p></div>
 </div>`;
 const sceneCompIntro = () => `<div class="scene introrow">
   <div class="np-card"><div class="art">🏷️</div><p>정답을 알려주는<br>공부</p></div>
@@ -578,7 +599,7 @@ const MODULES = [
   ]},
   { id:'unsupervised', title:'비슷한 것끼리 모으기', icon:'🧩',
     doneMsg:'비지도학습을 알게 되었어요!', steps:[
-    { type:'info', scene:sceneUnsupIntro, text:'이번에는 이름표가 없어요' },
+    { type:'info', scene:sceneUnsupIntro, text:'새로운 동물이 왔어요. 이름표는 없어요' },
     { type:'sort', text:'비슷한 사진끼리 아래로 옮겨 보세요' },
     { type:'recap', icon:'🧩',
       title:'정답 없이 비슷한 것끼리 묶었어요',
@@ -714,7 +735,7 @@ const RUN = {
     S.sel = new Set();
     const want = KIND_NAME[step.kind];
     el.innerHTML = `<p class="say" role="status">${step.text}</p>
-      <div class="photos">${PHOTOS.map((p,i) => photoCard(p, i, true)).join('')}</div>
+      <div class="photos">${PHOTOS_SUP.map((p,i) => photoCard(p, i, true)).join('')}</div>
       <div class="btnrow">
         <button class="btn-ghost" id="resetBtn" type="button">🔄 다시 고르기</button>
         <button class="big-btn" id="nextBtn" type="button" disabled>다음 ▶</button>
@@ -750,7 +771,7 @@ const RUN = {
   sort(step, el){
     S.groups = {};
     el.innerHTML = `<p class="say" role="status">${step.text}</p>
-      <div class="photos">${PHOTOS.map((p,i) => photoCard(p, i, false)).join('')}</div>
+      <div class="photos">${PHOTOS_UNSUP.map((p,i) => photoCard(p, i, false)).join('')}</div>
       <div class="bins">
         <div class="bin a" data-g="a"><h3>🅰️ 이쪽 무리</h3><div class="binlist" id="binA"></div></div>
         <div class="bin b" data-g="b"><h3>🅱️ 저쪽 무리</h3><div class="binlist" id="binB"></div></div>
@@ -882,7 +903,7 @@ function renderPick(step){
     btn.querySelector('.tag').textContent = on ? `${KIND_NAME[p.kind]} · 선택됨` : KIND_NAME[p.kind];
     if(on){ p.kind === step.kind ? right++ : wrong++; }
   });
-  const total = PHOTOS.filter(p => p.kind === step.kind).length;
+  const total = PHOTOS_SUP.filter(p => p.kind === step.kind).length;
   const ok = right === total && wrong === 0;
   $('#nextBtn').disabled = !ok;
   // 남은 안내 — 점수가 아니라 '무엇을 하면 되는지'만 말한다
@@ -989,13 +1010,13 @@ function renderSort(){
   });
   // 정답은 없다. 8장을 다 나누기만 하면 열린다.
   const placed = Object.keys(S.groups).length;
-  $('#nextBtn').disabled = placed < PHOTOS.length;
+  $('#nextBtn').disabled = placed < PHOTOS_UNSUP.length;
   // 문서 요구: 진행 상태를 "3 / 8"로 보여 준다. 점수가 아니라 남은 양이다.
   const hint = $('#sortHint');
   if(hint) hint.textContent = placed === 0
     ? '사진을 끌어다 놓거나, 눌러서 고를 수 있어요'
-    : placed < PHOTOS.length
-      ? `${placed} / ${PHOTOS.length} 장을 옮겼어요`
+    : placed < PHOTOS_UNSUP.length
+      ? `${placed} / ${PHOTOS_UNSUP.length} 장을 옮겼어요`
       : '다 옮겼어요. 결과를 볼까요?';
 }
 
