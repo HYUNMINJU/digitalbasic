@@ -471,13 +471,20 @@ const MODULES = [
   ]},
   { id:'typeword', title:'글자 따라 쓰기', icon:'✍️', doneMsg:'따라 쓰기 박사가 되었어요!', steps:[
     { type:'info', scene:sceneTypeIntro, text:'파란 글자를 순서대로 눌러 써 봐요' },
-    /* 짧은 것(2글자)부터 긴 것(4글자)까지, 다양한 위치의 자모 */
+    /* 한 글자짜리부터 길게. 복합모음(ㅘ)·된소리(ㄲ)는 이 키보드로 못 치니 넣지 말 것 */
     { type:'typeword', word:['ㄱ','ㅏ'], text:'파란 글자를 순서대로 눌러요' },
     { type:'typeword', word:['ㄴ','ㅜ'], text:'파란 글자를 순서대로 눌러요' },
     { type:'typeword', word:['ㅁ','ㅏ','ㄹ'], text:'틀리면 지우기로 지우고 다시 써요' },
     { type:'typeword', word:['ㅂ','ㅓ','ㅅ'], text:'파란 글자를 순서대로 눌러요' },
     { type:'typeword', word:['ㅇ','ㅏ','ㄱ','ㅏ'], text:'파란 글자를 순서대로 눌러요' },
     { type:'typeword', word:['ㄷ','ㅗ','ㄹ','ㅣ'], text:'파란 글자를 순서대로 눌러요' },
+    /* 두 글자 낱말 */
+    { type:'typeword', word:['ㄴ','ㅏ','ㅁ','ㅜ'], text:'파란 글자를 순서대로 눌러요' },
+    { type:'typeword', word:['ㅅ','ㅏ','ㄹ','ㅏ','ㅁ'], text:'파란 글자를 순서대로 눌러요' },
+    /* 세 글자 낱말 */
+    { type:'typeword', word:['ㄱ','ㅗ','ㅇ','ㅑ','ㅇ','ㅇ','ㅣ'], text:'파란 글자를 순서대로 눌러요' },
+    /* 네 글자 낱말 — 제일 긴 도전 */
+    { type:'typeword', word:['ㄷ','ㅐ','ㅎ','ㅏ','ㄴ','ㅁ','ㅣ','ㄴ','ㄱ','ㅜ','ㄱ'], text:'천천히 눌러 보세요' },
   ]},
 ];
 
