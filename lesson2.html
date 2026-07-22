@@ -235,6 +235,29 @@ footer#dots:empty{display:none;}
 .kb.mini .key.space{max-width:150px;}
 .pointfinger{font-size:56px; line-height:1; display:block; margin-top:6px;}
 
+/* ===== 키보드 깨우기 안내 =====
+   파일을 직접 열면 브라우저가 문서에 포커스를 안 줘서 키 입력이 안 들어온다.
+   첫 키가 들어오기 전까지만 '화면을 한 번 눌러 주세요'를 띄운다. */
+/* 헤더 아래 띠로 자리를 차지한다(겹치면 지시문이나 키보드를 가린다) */
+#wake{
+  flex:none; width:100%; border:none;
+  background:var(--sun); color:#4A3200; font-weight:800;
+  font-size:clamp(17px,1.9vw,24px); padding:14px 20px;
+  cursor:pointer; text-align:center;
+  box-shadow:0 2px 10px rgba(255,195,66,.4);
+  animation:wakepulse 1.6s ease-in-out infinite;
+}
+#wake[hidden]{display:none;}
+@keyframes wakepulse{0%,100%{filter:brightness(1);}50%{filter:brightness(1.12);}}
+/* 안내 띠가 자리를 차지한 만큼 위쪽 여백을 줄여 키보드가 안 잘리게 한다
+   (:has() 미지원 브라우저 대비로 JS가 body에 .waking 클래스를 붙인다) */
+body.waking main#stage{padding-top:6px;}
+body.waking .say{margin:2px 0 8px;}
+body.waking .findbig{min-height:56px;}
+body.waking .keyshow{min-height:50px; margin-top:6px;}
+body.waking footer#dots{padding:6px;}
+@media (prefers-reduced-motion:reduce){#wake{animation:none;}}
+
 /* ===== 축하 ===== */
 .confetti{position:fixed; inset:0; pointer-events:none; overflow:hidden; z-index:1;}
 .confetti span{position:absolute; top:-60px; font-size:36px; animation:fall linear infinite;}
@@ -271,6 +294,7 @@ footer#dots:empty{display:none;}
   <button class="hbtn" id="volBtn" type="button" aria-label="소리 조절">🔊</button>
   <button class="hbtn" id="ttsBtn" type="button">💬 다시 듣기</button>
 </header>
+<button id="wake" type="button" hidden>👆 화면을 한 번 눌러 주세요</button>
 <main id="stage"></main>
 <footer id="dots"></footer>
 <div id="praise" hidden></div>
@@ -440,6 +464,7 @@ function runStep(){
   renderDots();
   speak(step.text);
   RUN[step.type](step, stage);
+  armWake();                 // 키를 눌러야 하는 단계면 포커스 안내 준비
 }
 function nextStep(){
   const m = MODULES[S.mi];
@@ -602,7 +627,14 @@ const KEYRUN = {
     }
   },
 };
+/* 키보드 깨우기 상태 (아래 armWake 참고) */
+let gotKey = false, wakeTimer = null;
+const wakeBtn = $('#wake');
+function hideWake(){ wakeBtn.hidden = true; document.body.classList.remove('waking'); }
+function showWake(){ wakeBtn.hidden = false; document.body.classList.add('waking'); }
+
 window.addEventListener('keydown', e => {
+  gotKey = true; hideWake();        // 키가 들어온다 = 포커스 정상
   if(S.screen !== 'play' || S.mi < 0) return;
   const step = MODULES[S.mi].steps[S.si];
   const h = KEYRUN[step.type];
@@ -613,7 +645,32 @@ window.addEventListener('keydown', e => {
   h(step, e);
 });
 
+/* ===== 키보드 깨우기 =====
+   파일을 직접 열거나(file://) 창이 포커스를 잃으면 keydown이 안 들어온다.
+   키를 눌러야 하는 단계인데 아직 한 번도 키가 안 들어왔으면 안내를 띄운다. */
+function needsKey(){
+  if(S.screen !== 'play' || S.mi < 0) return false;
+  return !!KEYRUN[MODULES[S.mi].steps[S.si].type];
+}
+function armWake(){
+  clearTimeout(wakeTimer);
+  if(gotKey) return;                      // 이미 키가 통하는 환경이면 영원히 안 띄운다
+  wakeTimer = setTimeout(() => {
+    if(!gotKey && needsKey() && !document.hasFocus()) showWake();
+  }, 2500);
+}
+function grabFocus(){
+  try{ window.focus(); document.body.focus(); }catch(e){}
+  hideWake();
+}
+wakeBtn.onclick = grabFocus;
+document.addEventListener('pointerdown', () => { hideWake(); });
+window.addEventListener('focus', hideWake);
+window.addEventListener('blur', armWake);
+try{ window.focus(); }catch(e){}          // 로드 직후 스스로 포커스 시도
+
 goHome();
+armWake();
 </script>
 </body>
 </html>
