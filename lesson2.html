@@ -90,6 +90,14 @@ footer#dots:empty{display:none;}
   position:absolute; top:18px; right:18px; background:var(--green-soft); color:#087F46;
   border-radius:999px; padding:9px 18px; font-weight:800; font-size:17px;
 }
+.pickerlink{
+  display:inline-block; margin-top:34px; padding:14px 30px; border-radius:999px;
+  background:var(--card); color:var(--sub); font-weight:700;
+  font-size:clamp(17px,1.8vw,23px); text-decoration:none; box-shadow:var(--shadow-sm);
+  transition:transform .12s ease, color .12s ease;
+}
+.pickerlink:hover{color:var(--accent); transform:translateY(-2px);}
+.pickerlink:focus-visible{outline:4px solid #94C1FF; outline-offset:3px;}
 
 /* ===== 큰 버튼 ===== */
 .big-btn{
@@ -370,7 +378,8 @@ const sceneTypeIntro = () => `<div class="scene introrow">
   <div class="np-card"><div class="art">⌫</div><p>틀리면 지우기 키로<br>지우고 다시 써요</p></div>
 </div>`;
 
-/* ===== 학습 내용 (단일 데이터) ===== */
+/* ===== 학습 내용 (단일 데이터) =====
+   두 파트로 나눔: 파트1 위치 찾기, 파트2 따라 쓰기 */
 const MODULES = [
   { id:'findkey', title:'키보드 위치 찾기', icon:'🔍', doneMsg:'키보드 위치 박사가 되었어요!', steps:[
     { type:'info', scene:sceneFindIntro, text:'화면에서 반짝이는 키를 찾아 눌러요' },
@@ -391,11 +400,16 @@ const MODULES = [
     { type:'findkey', code:'Digit1', label:'1', text:'숫자 1 을 찾아 눌러 보세요' },
     { type:'findkey', code:'Digit5', label:'5', text:'숫자 5 를 찾아 눌러 보세요' },
     { type:'findkey', code:'Digit0', label:'0', text:'숫자 0 을 찾아 눌러 보세요' },
-    /* 6단계 — 따라 쓰기 (입력하고 지우기) */
+  ]},
+  { id:'typeword', title:'글자 따라 쓰기', icon:'✍️', doneMsg:'따라 쓰기 박사가 되었어요!', steps:[
     { type:'info', scene:sceneTypeIntro, text:'파란 글자를 순서대로 눌러 써 봐요' },
+    /* 짧은 것(2글자)부터 긴 것(4글자)까지, 다양한 위치의 자모 */
     { type:'typeword', word:['ㄱ','ㅏ'], text:'파란 글자를 순서대로 눌러요' },
-    { type:'typeword', word:['ㄴ','ㅏ','ㅁ'], text:'틀리면 지우기로 지우고 다시 써요' },
+    { type:'typeword', word:['ㄴ','ㅜ'], text:'파란 글자를 순서대로 눌러요' },
+    { type:'typeword', word:['ㅁ','ㅏ','ㄹ'], text:'틀리면 지우기로 지우고 다시 써요' },
+    { type:'typeword', word:['ㅂ','ㅓ','ㅅ'], text:'파란 글자를 순서대로 눌러요' },
     { type:'typeword', word:['ㅇ','ㅏ','ㄱ','ㅏ'], text:'파란 글자를 순서대로 눌러요' },
+    { type:'typeword', word:['ㄷ','ㅗ','ㄹ','ㅣ'], text:'파란 글자를 순서대로 눌러요' },
   ]},
 ];
 
@@ -437,13 +451,23 @@ function winStep(){
   busy = true;
   praise(() => { busy = false; nextStep(); });
 }
-/* 모듈이 1개뿐이라 완주 = 곧 오늘 공부 끝. 바로 finale로 간다.
-   (done 맵을 보고 판단하면 재방문 시 첫 화면부터 finale이 떠 버린다) */
+/* 파트(모듈) 하나를 끝내면 축하 화면. 두 파트 모두 끝나면 finale. */
 function celebrate(m){
   S.screen = 'celebrate';
   stage.onclick = null;
   renderDots();
-  finale();
+  if(MODULES.every(x => done[x.id])){ finale(); return; }
+  stage.innerHTML = `<div class="celebrate">
+    <span class="ce">🏆</span>
+    <h2>${m.doneMsg}</h2>
+    <div class="btns">
+      <button class="big-btn green" id="againBtn" type="button">🔄 한 번 더</button>
+      <button class="big-btn" id="homeBtn2" type="button">🏠 처음으로</button>
+    </div>
+  </div>`;
+  speak(m.doneMsg);
+  $('#againBtn').onclick = () => { S.si = 0; runStep(); };
+  $('#homeBtn2').onclick = goHome;
 }
 function finale(){
   const E = ['🎉','🎊','⭐','🌸'];
@@ -453,24 +477,43 @@ function finale(){
     <div class="celebrate">
       <span class="ce">🎓</span>
       <h2>키보드를 다 익혔어요!</h2>
-      <p class="fin-sub">위치 찾기 ✅&ensp;숫자 ✅&ensp;따라 쓰기 ✅<br>정말 대단해요!</p>
+      <p class="fin-sub">위치 찾기 ✅&ensp;따라 쓰기 ✅<br>정말 대단해요!</p>
       <div class="btns">
         <button class="big-btn green" id="againBtn" type="button">🔄 한 번 더</button>
         <button class="big-btn" id="homeBtn2" type="button">🏠 처음으로</button>
       </div>
     </div>`;
-  speak('와! 키보드 위치를 모두 익혔어요. 정말 대단해요!');
+  speak('와! 키보드를 모두 익혔어요. 정말 대단해요!');
   $('#againBtn').onclick = () => { S.si = 0; runStep(); };
-  $('#homeBtn2').onclick = goPicker;
+  $('#homeBtn2').onclick = goHome;
 }
 function startModule(i){
   S.mi = i; S.si = 0;
   $('#title').textContent = MODULES[i].title;
   runStep();
 }
-/* 모듈이 하나뿐이라 내부 홈(카드 선택) 없이 '처음으로'는 차시 선택 화면으로 바로 나간다 */
-function goPicker(){ try{ speechSynthesis.cancel(); }catch(e){} location.href = 'index.html'; }
-$('#homeBtn').onclick = e => { e.currentTarget.blur(); goPicker(); };
+/* 파트가 2개라 카드 선택 화면(내부 홈)을 둔다. 여기서 index로도 나갈 수 있다. */
+function goHome(){
+  S.screen = 'home'; S.mi = -1;
+  stage.onclick = null;
+  try{ speechSynthesis.cancel(); }catch(e){}
+  $('#title').textContent = '키보드와 친해지기';
+  renderDots();
+  stage.innerHTML = `<div class="home">
+    <h1>무엇을 해 볼까요?</h1>
+    <div class="cards">${MODULES.map((m,i) => `
+      <button class="card" data-i="${i}" type="button">
+        ${done[m.id] ? '<span class="badge">✅ 해냈어요</span>' : ''}
+        <span class="cicon">${m.icon}</span>
+        <span class="cname">${m.title}</span>
+      </button>`).join('')}
+    </div>
+    <a class="pickerlink" href="index.html">📚 다른 수업 고르기</a>
+  </div>`;
+  lastTts = '하고 싶은 공부를 눌러 보세요.';
+  stage.querySelectorAll('.card').forEach(c => c.onclick = () => startModule(+c.dataset.i));
+}
+$('#homeBtn').onclick = e => { e.currentTarget.blur(); goHome(); };
 
 /* ===== 단계 실행기 ===== */
 const RUN = {
@@ -570,8 +613,7 @@ window.addEventListener('keydown', e => {
   h(step, e);
 });
 
-/* 모듈이 하나뿐이라 카드 선택 화면을 건너뛰고 바로 시작 */
-startModule(0);
+goHome();
 </script>
 </body>
 </html>
