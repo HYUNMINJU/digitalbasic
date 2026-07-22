@@ -151,6 +151,38 @@ footer#dots:empty{display:none;}
 }
 .findbig .lens{font-size:.55em; filter:none;}
 
+/* ===== 따라 쓰기 ===== */
+/* 목표 자모 열: 회색으로 보여주고, 다음에 칠 글자는 파랗게 강조 */
+.wordgoal{
+  display:flex; gap:clamp(8px,1.4vw,16px); justify-content:center; flex-wrap:wrap;
+  margin:0 auto 6px; padding:0 12px;
+}
+.wordgoal span{
+  font-size:clamp(30px,5vh,58px); font-weight:800; color:#C6CDD9; letter-spacing:-1px;
+  min-width:clamp(34px,5vw,58px); text-align:center;
+}
+.wordgoal span.filled{color:var(--green);}
+.wordgoal span.now{color:var(--accent); animation:pulse 1.3s ease-in-out infinite;}
+/* 입력 상자: 친 글자가 크게 쌓이고 끝에 커서가 깜박인다 */
+.typebox{
+  min-height:clamp(64px,10vh,116px); width:min(92vw,760px); margin:0 auto;
+  background:var(--card); border-radius:22px; box-shadow:var(--shadow-sm);
+  display:flex; align-items:center; justify-content:center; gap:clamp(6px,1vw,12px);
+  padding:8px 18px; overflow:hidden;
+}
+.typebox .typechar{
+  font-size:clamp(40px,6.6vh,88px); font-weight:800; color:var(--ink); letter-spacing:-1px;
+  animation:charpop .25s ease;
+}
+@keyframes charpop{from{transform:scale(.3); opacity:0;}to{transform:scale(1); opacity:1;}}
+.typebox .caret{
+  display:inline-block; width:clamp(4px,.5vw,6px); height:clamp(40px,6.2vh,80px);
+  background:var(--accent); border-radius:3px; animation:blink 1s steps(1) infinite;
+}
+.typebox .placeholder{font-size:clamp(30px,5vh,56px); font-weight:800; color:#D8DEE8;}
+@keyframes blink{50%{opacity:0;}}
+@media (prefers-reduced-motion:reduce){.caret{animation:none;} .wordgoal span.now{animation:none;}}
+
 /* ===== 키보드 ===== */
 .keyshow{
   min-height:clamp(56px,9vh,104px); width:min(92vw,760px); margin:9px auto 0;
@@ -299,12 +331,14 @@ let busy = false;
 const KO = {Q:'ㅂ',W:'ㅈ',E:'ㄷ',R:'ㄱ',T:'ㅅ',Y:'ㅛ',U:'ㅕ',I:'ㅑ',O:'ㅐ',P:'ㅔ',
             A:'ㅁ',S:'ㄴ',D:'ㅇ',F:'ㄹ',G:'ㅎ',H:'ㅗ',J:'ㅓ',K:'ㅏ',L:'ㅣ',
             Z:'ㅋ',X:'ㅌ',C:'ㅊ',V:'ㅍ',B:'ㅠ',N:'ㅜ',M:'ㅡ'};
+/* 자모 → KeyX 역매핑 (따라 쓰기에서 목표 글자의 키 위치를 찾을 때 쓴다) */
+const KO2CODE = Object.fromEntries(Object.entries(KO).map(([L, j]) => [j, 'Key' + L]));
 function kbScene(target, cls){
   const hl = code => code === target ? ' kb-target pulse' : '';
   const k = L => `<span class="key${hl('Key'+L)}" data-code="Key${L}"><b>${KO[L]}</b>${L}</span>`;
   const n = D => `<span class="key${hl('Digit'+D)}" data-code="Digit${D}"><b>${D}</b></span>`;
   return `<div class="kb ${cls||''}" aria-hidden="true">
-    <div class="kb-row">${'1234567890'.split('').map(n).join('')}</div>
+    <div class="kb-row">${'1234567890'.split('').map(n).join('')}<span class="key wide${hl('Backspace')}" data-code="Backspace"><b>지우기 ⌫</b></span></div>
     <div class="kb-row">${'QWERTYUIOP'.split('').map(k).join('')}</div>
     <div class="kb-row">${'ASDFGHJKL'.split('').map(k).join('')}<span class="key wide${hl('Enter')}" data-code="Enter"><b>엔터 ⏎</b></span></div>
     <div class="kb-row">${'ZXCVBNM'.split('').map(k).join('')}</div>
@@ -331,6 +365,10 @@ const sceneFindIntro = () => `<div class="scene introrow">
     <p>진짜 키보드에서<br>같은 자리를 눌러요</p>
   </div>
 </div>`;
+const sceneTypeIntro = () => `<div class="scene introrow">
+  <div class="np-card"><div class="art">✍️</div><p>파란 글자를<br>순서대로 눌러 써요</p></div>
+  <div class="np-card"><div class="art">⌫</div><p>틀리면 지우기 키로<br>지우고 다시 써요</p></div>
+</div>`;
 
 /* ===== 학습 내용 (단일 데이터) ===== */
 const MODULES = [
@@ -353,6 +391,11 @@ const MODULES = [
     { type:'findkey', code:'Digit1', label:'1', text:'숫자 1 을 찾아 눌러 보세요' },
     { type:'findkey', code:'Digit5', label:'5', text:'숫자 5 를 찾아 눌러 보세요' },
     { type:'findkey', code:'Digit0', label:'0', text:'숫자 0 을 찾아 눌러 보세요' },
+    /* 6단계 — 따라 쓰기 (입력하고 지우기) */
+    { type:'info', scene:sceneTypeIntro, text:'파란 글자를 순서대로 눌러 써 봐요' },
+    { type:'typeword', word:['ㄱ','ㅏ'], text:'파란 글자를 순서대로 눌러요' },
+    { type:'typeword', word:['ㄴ','ㅏ','ㅁ'], text:'틀리면 지우기로 지우고 다시 써요' },
+    { type:'typeword', word:['ㅇ','ㅏ','ㄱ','ㅏ'], text:'파란 글자를 순서대로 눌러요' },
   ]},
 ];
 
@@ -409,8 +452,8 @@ function finale(){
   stage.innerHTML = `<div class="confetti" aria-hidden="true">${conf}</div>
     <div class="celebrate">
       <span class="ce">🎓</span>
-      <h2>키보드 위치를 다 익혔어요!</h2>
-      <p class="fin-sub">긴 키 ✅&ensp;자음 모음 ✅&ensp;숫자 ✅<br>정말 대단해요!</p>
+      <h2>키보드를 다 익혔어요!</h2>
+      <p class="fin-sub">위치 찾기 ✅&ensp;숫자 ✅&ensp;따라 쓰기 ✅<br>정말 대단해요!</p>
       <div class="btns">
         <button class="big-btn green" id="againBtn" type="button">🔄 한 번 더</button>
         <button class="big-btn" id="homeBtn2" type="button">🏠 처음으로</button>
@@ -441,7 +484,36 @@ const RUN = {
       <div class="findbig" aria-hidden="true"><span class="lens">🔍</span>${step.label}</div>
       <div class="keyshow dim" id="keyshow">?</div>${kbScene(step.code)}`;
   },
+  typeword(step, el){
+    el.innerHTML = `<p class="say" role="status">${step.text}</p>
+      <div class="wordgoal" id="wordgoal" aria-hidden="true"></div>
+      <div class="typebox" id="typebox" aria-hidden="true"></div>
+      <div class="kbwrap" id="kbwrap">${kbScene(codeAt(step, 0))}</div>`;
+    renderTypeword(step);
+  },
 };
+
+/* 따라 쓰기: 목표 열의 i번째 자모가 눌러야 할 KeyX 코드 */
+function codeAt(step, i){
+  if(i >= step.word.length) return null;
+  return KO2CODE[step.word[i]] || null;
+}
+/* 현재 입력 상태(S.rep = 지금까지 친 글자 수)에 맞춰 목표 열·입력칸·키보드를 다시 그린다 */
+function renderTypeword(step){
+  const done = S.rep;
+  const goal = $('#wordgoal'), box = $('#typebox'), kbw = $('#kbwrap');
+  if(!goal || !box) return;
+  goal.innerHTML = step.word.map((ch, i) =>
+    `<span class="${i < done ? 'filled' : i === done ? 'now' : ''}">${ch}</span>`).join('');
+  if(done === 0){
+    box.innerHTML = `<span class="placeholder">여기에 써 봐요</span><span class="caret"></span>`;
+  } else {
+    box.innerHTML = step.word.slice(0, done).map(ch =>
+      `<span class="typechar">${ch}</span>`).join('') + `<span class="caret"></span>`;
+  }
+  // 다음에 칠 글자의 키를 반짝이게. 다 쳤으면 하이라이트 없음.
+  kbw.innerHTML = kbScene(codeAt(step, done));
+}
 
 /* ===== 키 입력 (전역 1개) ===== */
 function showKey(lab){
@@ -452,6 +524,11 @@ function showKey(lab){
   void ks.getBoundingClientRect();
   ks.classList.add('pop3');
 }
+/* 목표 키를 다시 반짝여 위치를 안내 (오입력 시) */
+function nudgeTarget(){
+  const t = stage.querySelector('.kb-target');
+  if(t){ t.classList.remove('hint'); void t.getBoundingClientRect(); t.classList.add('hint'); }
+}
 const KEYRUN = {
   findkey(step, e){
     const lab = keyLabel(e);
@@ -459,8 +536,27 @@ const KEYRUN = {
     showKey(lab);
     if(e.code === step.code){ winStep(); return; }
     speak(step.wrongTts || '괜찮아요. 반짝이는 키를 찾아보세요.');
-    const t = stage.querySelector('.kb-target');
-    if(t){ t.classList.remove('hint'); void t.getBoundingClientRect(); t.classList.add('hint'); }
+    nudgeTarget();
+  },
+  typeword(step, e){
+    // 지우기: 마지막 글자 삭제
+    if(e.code === 'Backspace'){
+      if(S.rep > 0){ S.rep--; renderTypeword(step); speak('지웠어요.'); }
+      return;
+    }
+    const want = codeAt(step, S.rep);
+    if(e.code === want){
+      S.rep++;
+      renderTypeword(step);
+      if(S.rep >= step.word.length){ setTimeout(winStep, 500); }
+      else speak(step.word[S.rep - 1]);
+      return;
+    }
+    // 그 밖의 키: 실패 표현 없이 부드럽게 안내 + 목표 키 반짝임
+    if(keyLabel(e)){
+      speak('괜찮아요. 파란 글자를 찾아 눌러요.');
+      nudgeTarget();
+    }
   },
 };
 window.addEventListener('keydown', e => {
