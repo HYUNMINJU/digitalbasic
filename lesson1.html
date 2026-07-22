@@ -90,6 +90,14 @@ footer#dots:empty{display:none;}
   position:absolute; top:18px; right:18px; background:var(--green-soft); color:#087F46;
   border-radius:999px; padding:9px 18px; font-weight:800; font-size:17px;
 }
+.pickerlink{
+  display:inline-block; margin-top:34px; padding:14px 30px; border-radius:999px;
+  background:var(--card); color:var(--sub); font-weight:700;
+  font-size:clamp(17px,1.8vw,23px); text-decoration:none; box-shadow:var(--shadow-sm);
+  transition:transform .12s ease, color .12s ease;
+}
+.pickerlink:hover{color:var(--accent); transform:translateY(-2px);}
+.pickerlink:focus-visible{outline:4px solid #94C1FF; outline-offset:3px;}
 
 /* ===== 큰 버튼 ===== */
 .big-btn{
@@ -641,6 +649,7 @@ function goHome(){
         <span class="cname">${m.title}</span>
       </button>`).join('')}
     </div>
+    <a class="pickerlink" href="index.html">📚 다른 수업 고르기</a>
   </div>`;
   lastTts = '하고 싶은 공부를 눌러 보세요.';
   stage.querySelectorAll('.card').forEach(c => c.onclick = () => startModule(+c.dataset.i));

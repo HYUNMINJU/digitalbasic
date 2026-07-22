@@ -418,33 +418,16 @@ function finale(){
     </div>`;
   speak('와! 키보드 위치를 모두 익혔어요. 정말 대단해요!');
   $('#againBtn').onclick = () => { S.si = 0; runStep(); };
-  $('#homeBtn2').onclick = goHome;
+  $('#homeBtn2').onclick = goPicker;
 }
 function startModule(i){
   S.mi = i; S.si = 0;
   $('#title').textContent = MODULES[i].title;
   runStep();
 }
-function goHome(){
-  S.screen = 'home'; S.mi = -1;
-  stage.onclick = null;
-  try{ speechSynthesis.cancel(); }catch(e){}
-  $('#title').textContent = '키보드와 친해지기';
-  renderDots();
-  stage.innerHTML = `<div class="home">
-    <h1>무엇을 해 볼까요?</h1>
-    <div class="cards">${MODULES.map((m,i) => `
-      <button class="card" data-i="${i}" type="button">
-        ${done[m.id] ? '<span class="badge">✅ 해냈어요</span>' : ''}
-        <span class="cicon">${m.icon}</span>
-        <span class="cname">${m.title}</span>
-      </button>`).join('')}
-    </div>
-  </div>`;
-  lastTts = '하고 싶은 공부를 눌러 보세요.';
-  stage.querySelectorAll('.card').forEach(c => c.onclick = () => startModule(+c.dataset.i));
-}
-$('#homeBtn').onclick = e => { e.currentTarget.blur(); goHome(); };
+/* 모듈이 하나뿐이라 내부 홈(카드 선택) 없이 '처음으로'는 차시 선택 화면으로 바로 나간다 */
+function goPicker(){ try{ speechSynthesis.cancel(); }catch(e){} location.href = 'index.html'; }
+$('#homeBtn').onclick = e => { e.currentTarget.blur(); goPicker(); };
 
 /* ===== 단계 실행기 ===== */
 const RUN = {
@@ -491,7 +474,8 @@ window.addEventListener('keydown', e => {
   h(step, e);
 });
 
-goHome();
+/* 모듈이 하나뿐이라 카드 선택 화면을 건너뛰고 바로 시작 */
+startModule(0);
 </script>
 </body>
 </html>
