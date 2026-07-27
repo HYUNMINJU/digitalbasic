@@ -1,15 +1,14 @@
-# bkit/도구 상태 파일
+# 도구 상태 파일 (커밋하지 않음)
 .bkit/
 .claude/
 .playwright-mcp/
 docs/
 
-# 폐기된 옛 자료
-마우스배우기.html
-*.svg
-마우스.jpg
-커서.png
-split-1920.png
+# archive/ 는 옛 자료 보관용 — 원안 문서(.docx)만 추적하고
+# 무거운 옛 브라우저 에셋(html·jpg·png·svg)은 커밋하지 않는다.
+archive/*
+!archive/
+!archive/*.docx
 
-# 임시 파일
+# 임시 이미지
 *.jpeg
