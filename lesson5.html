@@ -325,6 +325,73 @@ footer#dots:empty{display:none;}
 .wcard[disabled]{opacity:.45; cursor:default;}
 .wcard[disabled]:hover{transform:none;}
 
+/* ===== 붙여넣는 방법 그림 =====
+   ★ Ctrl+V만 알려 주면 안 된다. 알파벳을 못 읽는 학생에게는 V가 어느 키인지 알 길이 없다.
+     그래서 주된 길은 「마우스 오른쪽 버튼 → 붙여넣기」다 —
+     메뉴 글자가 한글이고, 마우스는 1차시에서 이미 배웠다.
+     Ctrl+V는 아래에 작게 곁들인다(아는 학생에게는 그게 더 빠르다). */
+.pastehow{
+  display:flex; align-items:center; justify-content:center; gap:12px;
+  background:#E8EDF5; border-radius:16px; padding:8px 12px; margin:0 auto;
+  width:100%; max-width:430px;
+}
+/* 마우스 그림 — 오른쪽 버튼만 노랗게 */
+.msvg{flex:none;}
+.msvg .btn-r{fill:var(--sun);}
+.msvg .body{fill:#fff; stroke:#B9C2D0; stroke-width:2;}
+.msvg .btn-l{fill:#EEF2F8;}
+.msvg .line{stroke:#B9C2D0; stroke-width:2;}
+/* 오른쪽 버튼을 누르면 나오는 메뉴 — 「붙여넣기」만 진하게 */
+.mmenu{
+  flex:none; background:var(--card); border-radius:10px; padding:5px 6px;
+  box-shadow:var(--shadow-sm); display:flex; flex-direction:column; gap:2px;
+  font-size:12px; font-weight:800; color:#B4BDCA; letter-spacing:-.5px;
+}
+.mmenu .hit{
+  background:var(--sun); color:#7A4A00; border-radius:6px; padding:3px 8px;
+  font-size:14px;
+}
+.mmenu span{padding:2px 8px; text-align:left;}
+.pastearrow{flex:none; font-size:20px; color:#9AA5B5;}
+/* 키보드로도 된다 — 곁들이는 줄이라 작게 */
+.altway{
+  margin-top:5px; text-align:center; font-size:14px; font-weight:700; color:var(--sub);
+}
+.altway kbd{min-width:26px; padding:2px 6px; font-size:13px;}
+
+/* ===== 골라서 쓰는 문장 목록 =====
+   이미 만들어진 말을 길게 늘어놓고 줄마다 복사 버튼을 둔다.
+   낱말 조립이 힘든 학생도 여기서는 바로 골라 쓸 수 있다. */
+.picklist{display:flex; flex-direction:column; gap:8px; padding:2px;}
+.pickrow{
+  display:flex; align-items:center; gap:12px; padding:8px 12px;
+  background:var(--card); border-radius:16px; box-shadow:var(--shadow-sm);
+  border:3px solid transparent;
+}
+.pickrow .ppic{font-size:clamp(24px,2.6vw,32px); line-height:1.1; flex:none;}
+.pickrow .ptxt{
+  flex:1; text-align:left; font-size:clamp(18px,1.9vw,24px); font-weight:800;
+  letter-spacing:-.5px; word-break:keep-all;
+}
+/* 방금 복사한 줄 — 여러 번 누르므로 '마지막에 담은 것'만 표시한다 */
+.pickrow.on{border-color:var(--green); background:var(--green-soft);}
+.pcopy{
+  flex:none; min-height:52px; min-width:112px; padding:8px 16px;
+  border-radius:14px; background:var(--accent); color:#fff;
+  font-size:clamp(16px,1.7vw,20px); font-weight:800; letter-spacing:-.5px;
+  box-shadow:0 4px 12px rgba(49,130,246,.28);
+  transition:transform .12s ease, filter .12s ease;
+}
+.pcopy:hover{filter:brightness(1.06);}
+.pcopy:active{transform:translateY(2px) scale(.98);}
+/* 앞 스텝으로 — 「골라 쓰기 ↔ 내가 만들기」를 오가는 버튼.
+   다음 버튼보다 약하게 보여야 한다(되돌아가기가 주된 길이 아니다). */
+.ghostbtn{
+  background:var(--card); color:var(--sub); box-shadow:var(--shadow-sm);
+  border:3px solid #D8DEE8;
+}
+.ghostbtn:hover{filter:none; background:#F1F4F9;}
+
 /* ===== 연습용 AI 창 ===== */
 .aiwin{
   background:var(--card); border-radius:24px; box-shadow:var(--shadow-sm);
@@ -360,6 +427,11 @@ footer#dots:empty{display:none;}
   flex:none; width:38px; height:38px; border-radius:50%;
   background:var(--accent); color:#fff;
   display:flex; align-items:center; justify-content:center; font-size:21px;
+}
+/* 문장 속 강조(「오른쪽」) — 앞의 번호 동그라미 규칙을 물려받지 않게 되돌린다 */
+.gstep b.rb{
+  width:auto; height:auto; border-radius:0; background:none;
+  color:var(--accent-deep); display:inline; font-size:inherit;
 }
 /* 2차시 화면 키보드와 같은 시각 언어로 Ctrl+V를 보여 준다 */
 kbd{
@@ -416,6 +488,8 @@ kbd{
   .hbtn{min-height:58px; padding:8px 16px;}
   .actionrow{flex-direction:column; align-items:stretch;}
   .actbtn{min-width:0;}
+  .picklist{gap:6px;}
+  .pcopy{min-width:88px;}
 }
 /* 세로가 짧은 화면 — 3·4차시와 같은 860px 기준.
    760으로 두면 1366×768이 스타일을 못 받아 그냥 넘친다(3차시에서 실제로 겪은 버그). */
@@ -441,6 +515,10 @@ kbd{
   .gtab .gpic{font-size:clamp(17px,1.8vw,22px);}
   .wordcards{gap:6px;}
   .wordcards .wcard{min-height:54px; padding:6px 9px; gap:8px;}
+  .picklist{gap:7px;}
+  .pickrow{padding:7px 11px; gap:10px; border-width:3px;}
+  .pickrow .ptxt{font-size:clamp(17px,1.8vw,21px);}
+  .pcopy{min-height:48px; min-width:104px; padding:7px 14px;}
   .wcard{min-height:76px; min-width:130px; padding:8px 14px; border-width:3px;}
   .wcard .wpic{font-size:clamp(26px,3vw,36px);}
   .wcard .wtxt{font-size:clamp(17px,1.8vw,21px);}
@@ -475,15 +553,22 @@ kbd{
   .recap p{font-size:clamp(18px,2vw,24px); line-height:1.45; margin-bottom:8px;}
   .recap .keys{margin-top:10px; gap:9px;}
   .recap .keys span{padding:8px 16px; font-size:17px;}
-  /* 홈: 카드 3장이 한 줄에 */
+  /* 홈: 카드 4장이 한 줄에.
+     ★ 파트가 늘면 여기를 다시 계산할 것 — 4장 기준 1024폭에서
+       4×218 + 3×12(간격) + 여백 = 약 944px < 1024. 두 줄이 되면 아래 링크가 잘린다.
+     한 줄로 미는 건 폭이 넉넉할 때만 — 좁은 화면에서는 그대로 여러 줄로 둔다. */
   .home h1{font-size:clamp(24px,3vw,34px); margin:0 0 4px;}
-  .cards{margin-top:14px; gap:16px;}
-  .card{width:min(240px,30vw); min-height:190px; gap:12px; border-radius:24px;}
-  .cicon{width:84px; height:84px; font-size:44px;}
-  .cname{font-size:clamp(19px,1.9vw,23px);}
-  .badge{font-size:14px; padding:6px 12px; top:10px; right:10px;}
-  .pickerlink{margin-top:16px; padding:11px 24px;}
+  .cards{margin-top:14px; gap:12px;}
+  .card{width:min(218px,22vw); min-height:186px; gap:10px; border-radius:24px;}
+  .cicon{width:78px; height:78px; font-size:40px;}
+  .cname{font-size:clamp(17px,1.7vw,21px);}
+  .badge{font-size:13px; padding:5px 10px; top:9px; right:9px;}
+  .pickerlink{margin-top:14px; padding:11px 24px;}
   footer#dots{padding:8px;}
+}
+/* 세로가 짧으면서 가로는 넉넉할 때만 홈 카드를 한 줄로 민다 */
+@media (max-height:860px) and (min-width:821px){
+  .cards{flex-wrap:nowrap;}
 }
 /* 1024×600 전용. 위 860 블록에 얹는다 —
    860을 고치면 1366×768이 깨진다(3차시에서 겪은 그 버그). */
@@ -525,6 +610,11 @@ kbd{
   .gtab .gpic{font-size:14px;}
   .wordcards{gap:5px;}
   .wordcards .wcard{min-height:44px; padding:4px 7px; gap:5px; border-width:3px;}
+  .picklist{gap:6px;}
+  .pickrow{padding:5px 10px; gap:9px; border-radius:14px;}
+  .pickrow .ppic{font-size:22px;}
+  .pickrow .ptxt{font-size:16px;}
+  .pcopy{min-height:44px; min-width:94px; padding:6px 12px; font-size:15px; border-radius:12px;}
   .wordcards .wcard .wpic{font-size:22px;}
   .wordcards .wcard .wtxt{font-size:15px;}
   .wcard{min-height:62px; min-width:116px; padding:5px 11px; border-radius:16px;}
@@ -538,13 +628,29 @@ kbd{
   .aiout{padding:5px 11px; gap:9px;}
   .aipic{font-size:clamp(30px,4vw,42px);}
   .ailine{font-size:clamp(15px,1.6vw,19px);}
-  /* 안내 3줄 + 제미나이 버튼이 세로로 쌓여 여기가 제일 빡빡하다.
+  /* 안내 3줄 + 키보드 그림 + 제미나이 버튼이 세로로 쌓여 여기가 제일 빡빡하다.
      넘치면 .swap 안에서 스크롤은 되지만, 제미나이 버튼을 찾으려고
-     스크롤해야 하는 상황 자체를 만들면 안 된다. */
-  .guide{gap:3px; margin-bottom:5px;}
-  .gstep{font-size:clamp(15px,1.6vw,18px);}
-  .gstep b{width:24px; height:24px; font-size:14px;}
-  kbd{min-width:34px; padding:3px 8px; font-size:clamp(14px,1.5vw,17px);}
+     스크롤해야 하는 상황 자체를 만들면 안 된다.
+     ★ 붙여넣기 그림을 넣으면서 넘쳤다 — 글씨를 줄여 자리를 냈다.
+       그림이 뜻을 나르므로 글자는 작아도 된다(그림을 빼는 쪽이 훨씬 나쁘다). */
+  .guide{gap:2px; margin-bottom:4px;}
+  .gstep{font-size:15px;}
+  .gstep b{width:22px; height:22px; font-size:13px;}
+  kbd{min-width:30px; padding:2px 7px; font-size:14px;}
+  /* 제미나이 안내가 뜨면 복사 버튼은 이미 다 쓴 것이다 — 자리를 안내에 넘긴다 */
+  main#stage:has(#guide) .actionrow{margin-top:4px;}
+  main#stage:has(#guide) .actbtn{min-height:46px; padding:5px 20px; font-size:18px;}
+  main#stage:has(#guide) .tray{margin-top:4px; padding:3px 13px;}
+  main#stage:has(#guide) .tray .tico{font-size:20px;}
+  main#stage:has(#guide) .tray .ttext{font-size:15px;}
+  .pastehow{padding:4px 10px; gap:8px; max-width:340px;}
+  .msvg{width:30px; height:42px;}
+  .mmenu{font-size:10px; padding:3px 4px; gap:1px;}
+  .mmenu span{padding:1px 6px;}
+  .mmenu .hit{font-size:12px; padding:2px 6px;}
+  .altway{margin-top:2px; font-size:12px;}
+  .altway kbd{min-width:20px; padding:1px 4px; font-size:11px;}
+  .extwrap{margin-top:5px;}
   .hintline{margin-top:5px; font-size:16px;}
   .big-btn{min-height:62px; min-width:200px; padding:9px 26px; font-size:clamp(19px,1.9vw,24px);}
   .btnrow{margin-top:7px; gap:13px;}
@@ -786,6 +892,29 @@ function replyFor(step){
   return {pic:r.pic, line:`네! ${desc} ${key} 그림이에요.`};
 }
 
+/* 붙여넣는 방법을 그림으로 보여 준다.
+   ★ Ctrl+V만 알려 주면 안 된다 — 알파벳을 못 읽으면 V가 어느 키인지 알 수 없다.
+     주된 길은 마우스 오른쪽 버튼이다: 메뉴가 한글이고 마우스는 1차시에서 배웠다.
+     Ctrl+V는 아래 한 줄로 곁들인다(아는 학생에게는 그게 더 빠르다). */
+function pasteHow(){
+  return `<div class="pastehow" role="img"
+      aria-label="마우스 오른쪽 버튼을 누르면 메뉴가 나와요. 거기서 붙여넣기를 누르세요.">
+      <svg class="msvg" width="46" height="64" viewBox="0 0 46 64" aria-hidden="true">
+        <rect class="body" x="3" y="3" width="40" height="58" rx="19"/>
+        <path class="btn-l" d="M3 22V22 A19 19 0 0 1 22 3 h1 v19 z"/>
+        <path class="btn-r" d="M23 3 h1 A19 19 0 0 1 43 22 v0 h-20 z"/>
+        <line class="line" x1="23" y1="3" x2="23" y2="22"/>
+        <line class="line" x1="3" y1="22" x2="43" y2="22"/>
+      </svg>
+      <span class="pastearrow" aria-hidden="true">▶</span>
+      <div class="mmenu">
+        <span>자르기</span><span>복사</span>
+        <span class="hit">붙여넣기</span>
+      </div>
+    </div>
+    <p class="altway">키보드로도 돼요 &ensp;<kbd>Ctrl</kbd> + <kbd>V</kbd></p>`;
+}
+
 /* ===== 소개 장면 ===== */
 const scenePracticeIntro = () => `<div class="scene introrow">
   <div class="np-card"><div class="art">🖐️🃏</div><p>낱말을 눌러서<br>말을 만들어요</p></div>
@@ -794,6 +923,11 @@ const scenePracticeIntro = () => `<div class="scene introrow">
 const sceneDetailIntro = () => `<div class="scene introrow">
   <div class="np-card"><div class="art">🐱</div><p>고양이<br>그려 줘</p></div>
   <div class="np-card"><div class="art">🏃🐱</div><p>달려가는 고양이<br>그려 줘</p></div>
+</div>`;
+/* 진짜 AI를 겪은 뒤에 오는 파트다 — '또 부탁해도 된다'가 핵심 메시지 */
+const sceneManyIntro = () => `<div class="scene introrow">
+  <div class="np-card"><div class="art">📚</div><p>부탁할 말이<br>아주 많아요</p></div>
+  <div class="np-card"><div class="art">📋📋📋</div><p>몇 번이든<br>또 부탁해요</p></div>
 </div>`;
 const sceneRealIntro = () => `<div class="scene introrow">
   <div class="np-card"><div class="art">🤖</div><p>이번에는<br>진짜 AI예요</p></div>
@@ -878,6 +1012,32 @@ const SLOTS3 = [{role:'desc', label:'어떤'}, {role:'what', label:'무엇을'},
 const CARDS2 = ALL_WHAT.concat([DO_CARD]);
 const CARDS3 = ALL_DESC.concat(ALL_WHAT, [DO_CARD]);
 
+/* ===== 골라서 바로 쓰는 문장 목록 =====
+   이미 만들어진 문장을 길게 늘어놓고 줄마다 복사 버튼을 둔다.
+   낱말을 조립할 필요가 없어서, 만들기를 힘들어하는 학생도 진짜 AI에 바로 쓸 수 있다.
+   ★ 손으로 적지 않고 낱말에서 만들어 낸다 — 낱말을 고치면 목록도 따라 바뀌고,
+     `REPLIES`에 없는 낱말이 섞여 들어갈 일이 없다. */
+const PICK_PAIRS = [
+  ['달려가는','고양이'], ['자는','곰'],      ['춤추는','펭귄'],
+  ['귀여운','토끼'],     ['커다란','나비'],  ['웃는','강아지'],
+  ['나는','새'],         ['둥근','물고기'],  ['예쁜','무지개'],
+  ['반짝이는','별'],     ['신난','비행기'],  ['커다란','케이크'],
+  ['먹는','딸기'],       ['졸린','수박'],    ['멋진','아이스크림'],
+  ['예쁜','꽃'],         ['커다란','나무'],  ['웃는','눈사람'],
+  ['노래하는','해바라기'],['달려가는','자동차'],['빨리 가는','기차'],
+  ['커다란','배'],       ['달려가는','자전거'],['날아가는','로켓'],
+  ['둥둥 뜨는','풍선'],  ['아늑한','집'],    ['멋진','모자'],
+  ['구르는','공'],       ['커다란','우산'],  ['귀여운','펭귄'],
+];
+/* 낱말의 이모지를 찾아 준다 — 없으면 빈 문자열(그림 없이 글자만 보여도 된다) */
+const PIC_OF = {};
+GROUPS.forEach(g => g.items.forEach(it => { PIC_OF[it.word] = it.pic; }));
+const PICK_LINES = PICK_PAIRS.map(([d, w]) => ({
+  desc: d, what: w,
+  text: `${d} ${w} 그림 그려 줘`,
+  pic: (PIC_OF[d] || '') + (PIC_OF[w] || '🎨'),
+}));
+
 const MODULES = [
   { id:'practice', title:'연습해 보기', icon:'📋',
     doneMsg:'복사하고 붙여넣을 줄 알게 되었어요!', steps:[
@@ -927,6 +1087,25 @@ const MODULES = [
       soft:'잘 안 되면 선생님께 말해요.<br>천천히 해도 괜찮아요.',
       text:'진짜 AI에게 부탁할 수 있어요' },
   ]},
+  /* 많이 부탁하기 — 마지막 파트다. 진짜 AI를 한 번 겪은 뒤에 온다:
+     '이걸 붙여넣으면 그림이 나온다'를 이미 알기 때문에 목록을 계속 퍼다 쓸 이유가 생긴다.
+     두 가지 길을 오간다.
+     ① 골라서 쓰기: 이미 만들어진 문장 목록에서 복사(몇 번이든)
+     ② 내가 만들기: 지금까지처럼 낱말로 조립
+     ★ 두 스텝에 `back:true`를 둬서 서로 오갈 수 있다. 한 화면에 둘을 넣으면
+       1024×600에 안 들어가서 스텝을 나누고 되돌아가는 길을 냈다. */
+  { id:'many', title:'많이 부탁해 보기', icon:'📚',
+    doneMsg:'여러 가지를 부탁할 줄 알게 되었어요!', steps:[
+    { type:'info', scene:sceneManyIntro, text:'이번에는 여러 개를 부탁해요' },
+    { type:'pick', back:false, text:'마음에 드는 말을 골라 복사해요' },
+    { type:'real', slots:SLOTS3, cards:CARDS3, group:'mood', back:true,
+      text:'직접 만들어서 부탁해도 돼요' },
+    { type:'recap', icon:'📚',
+      title:'얼마든지 부탁할 수 있어요',
+      body:'복사는 <b>몇 번이든</b> 다시 할 수 있어요.<br>골라 써도 되고 만들어 써도 돼요.',
+      keys:['골라서 복사','내가 만들기','또 복사하기'],
+      text:'복사는 몇 번이든 다시 할 수 있어요' },
+  ]},
 ];
 
 /* ===== 칭찬 ===== */
@@ -959,6 +1138,13 @@ function nextStep(){
   if(S.si >= m.steps.length - 1){ saveDone(m.id); celebrate(m); }
   else { S.si++; runStep(); }
 }
+/* 앞 스텝으로 — 「골라 쓰기 ↔ 내가 만들기」를 오가려고 둔다.
+   ★ 칭찬(praise)을 띄우지 않는다. 뒤로 가는 건 잘한 일도 못한 일도 아니다.
+   ★ 이 버튼은 step.back이 true인 스텝에만 나온다 — 다른 파트는 지금까지처럼 앞으로만 간다. */
+function prevStep(){
+  if(busy || S.si <= 0) return;
+  S.si--; runStep();
+}
 function winStep(){
   if(busy) return;
   busy = true;
@@ -988,7 +1174,7 @@ function finale(){
     <div class="celebrate">
       <span class="ce">🎓</span>
       <h2>AI에게 그림을 부탁할 수 있어요!</h2>
-      <p class="fin-sub">연습하기 ✅&ensp;자세히 말하기 ✅&ensp;진짜 AI ✅<br>정말 대단해요!</p>
+      <p class="fin-sub">연습하기 ✅&ensp;자세히 말하기 ✅<br>진짜 AI ✅&ensp;많이 부탁하기 ✅<br>정말 대단해요!</p>
       <div class="btns">
         <button class="big-btn green" id="againBtn" type="button">🔄 한 번 더</button>
         <button class="big-btn" id="homeBtn2" type="button">🏠 처음으로</button>
@@ -1166,9 +1352,62 @@ const RUN = {
   real(step, el){
     resetBuild(step);
     el.innerHTML = buildShell(step,
+      (step.back ? '<button class="big-btn ghostbtn" id="backBtn" type="button">◀ 앞으로</button>' : '') +
       '<button class="big-btn green" id="doneBtn" type="button" disabled>👍 해봤어요</button>');
+    if($('#backBtn')) $('#backBtn').onclick = e => { e.currentTarget.blur(); prevStep(); };
     $('#doneBtn').onclick = e => { e.currentTarget.blur(); winStep(); };
     renderReal(step);
+  },
+
+  /* 골라서 쓰기 — 이미 만들어진 문장을 늘어놓고 줄마다 복사한다.
+     ★ 여기서는 복사를 잠그지 않는다. 다른 스텝은 한 번 복사하면 끝이지만
+       이 화면은 '계속 복사해서 쓰는' 것이 목적이라 몇 번이든 다시 누를 수 있다. */
+  pick(step, el){
+    S.clip = ''; S.copied = false; S.copiedN = 0;
+    el.innerHTML = `<p class="say" role="status">${step.text}</p>
+      <div class="buildwrap picking">
+        <div class="tray" id="tray">
+          <span class="tico" aria-hidden="true">📋</span>
+          <span class="ttext" id="trayText">아직 비어 있어요</span>
+        </div>
+        <div class="swap" id="swap">
+          <div class="picklist" id="picklist">
+            ${PICK_LINES.map((L,i) => `
+              <div class="pickrow" data-i="${i}">
+                <span class="ppic" aria-hidden="true">${L.pic}</span>
+                <span class="ptxt">${L.text}</span>
+                <button class="pcopy" type="button" data-i="${i}"
+                  aria-label="${L.text} 복사">📋 복사</button>
+              </div>`).join('')}
+          </div>
+        </div>
+        <p class="hintline" id="buildHint" role="status">마음에 드는 말의 📋 복사를 눌러요</p>
+      </div>
+      <div class="btnrow">
+        ${step.back ? '<button class="big-btn ghostbtn" id="backBtn" type="button">◀ 앞으로</button>' : ''}
+        <button class="big-btn" id="nextBtn" type="button" disabled>다음 ▶</button>
+      </div>`;
+    const next = $('#nextBtn');
+    if($('#backBtn')) $('#backBtn').onclick = e => { e.currentTarget.blur(); prevStep(); };
+    next.onclick = e => { e.currentTarget.blur(); winStep(); };
+    el.querySelectorAll('.pcopy').forEach(b => {
+      b.onclick = e => {
+        e.currentTarget.blur();
+        const L = PICK_LINES[+b.dataset.i];
+        S.clip = L.text;
+        S.copiedN++;
+        copyToClipboard(S.clip);   // 진짜로 복사한다 — 제미나이에 붙여야 한다
+        // 어느 줄을 복사했는지 표시가 남아야 한다(여러 번 누르므로 방금 것만 표시)
+        el.querySelectorAll('.pickrow').forEach(r => r.classList.remove('on'));
+        b.closest('.pickrow').classList.add('on');
+        speak('복사했어요');
+        flyToTray(() => {
+          next.disabled = false;   // 한 번 복사하면 열리고, 그 뒤로도 계속 복사할 수 있다
+          const h = $('#buildHint');
+          if(h) h.textContent = '또 골라도 되고, 다음으로 가도 돼요';
+        });
+      };
+    });
   },
 
   recap(step, el){
@@ -1266,9 +1505,9 @@ function renderReal(step){
       swap.innerHTML = `<div id="guide">
         <div class="guide">
           <div class="gstep"><b>1</b> 제미나이를 열어요</div>
-          <div class="gstep"><b>2</b> 네모 칸을 눌러요</div>
-          <div class="gstep"><b>3</b> <kbd>Ctrl</kbd> + <kbd>V</kbd> 를 눌러요</div>
+          <div class="gstep"><b>2</b> 네모 칸에서 마우스 <b class="rb">오른쪽</b>을 눌러요</div>
         </div>
+        ${pasteHow()}
         <div class="extwrap">
           <a class="big-btn ext" id="geminiBtn" href="https://gemini.google.com/app"
              target="_blank" rel="noopener noreferrer">🌐 제미나이 열기</a>
@@ -1286,7 +1525,7 @@ function renderReal(step){
     e.currentTarget.blur();
     doCopy(step, () => {
       renderReal(step);
-      speak('제미나이를 열고 컨트롤 브이를 눌러요');
+      speak('제미나이를 열고 마우스 오른쪽으로 붙여넣기를 눌러요');
     });
   };
 
