@@ -26,7 +26,8 @@ a:focus-visible{outline:4px solid #94C1FF; outline-offset:3px;}
 h1{font-size:clamp(30px,3.8vw,52px); font-weight:800; letter-spacing:-1.5px; text-align:center; margin:0;}
 .cards{display:flex; gap:26px; justify-content:center; flex-wrap:wrap; margin-top:34px;}
 .card{
-  position:relative; width:min(350px,90vw); min-height:300px;
+  /* 5장이 1920 프로젝터에서 한 줄에 들어가는 크기 (5×310 + 4×26 = 1654) */
+  position:relative; width:min(310px,90vw); min-height:300px;
   background:var(--card); border-radius:32px;
   display:flex; flex-direction:column; align-items:center; justify-content:center; gap:22px;
   box-shadow:var(--shadow-sm);
@@ -42,16 +43,17 @@ h1{font-size:clamp(30px,3.8vw,52px); font-weight:800; letter-spacing:-1.5px; tex
 .cnum{font-size:clamp(17px,1.8vw,22px); font-weight:800; color:var(--accent);}
 .cname{font-size:clamp(23px,2.3vw,32px); font-weight:800; letter-spacing:-.5px; padding:0 12px; text-align:center;}
 @media (prefers-reduced-motion:reduce){.card{transition:none;}}
-/* 카드가 4장이 되면서 1024×600·1366×768에서 뒤쪽 장이 아래로 밀린다.
-   한 줄에 다 들어가도록 세로가 짧은 화면에서 카드를 줄인다. */
+/* 카드가 늘면서 1024×600·1366×768에서 뒤쪽 장이 아래로 밀린다.
+   한 줄에 다 들어가도록 세로가 짧은 화면에서 카드를 줄인다.
+   ★ 5장 기준: 1024폭에서 5×176 + 4×10(간격) + 28(양쪽 여백) = 948 < 1024. */
 @media (max-height:860px){
   body{padding:14px;}
   h1{font-size:clamp(24px,2.8vw,34px);}
-  .cards{gap:14px; margin-top:18px; flex-wrap:nowrap;}
-  .card{width:min(220px,23vw); min-height:200px; gap:12px; border-radius:24px; padding:10px;}
-  .cicon{width:86px; height:86px; font-size:44px;}
-  .cnum{font-size:16px;}
-  .cname{font-size:clamp(17px,1.7vw,21px);}
+  .cards{gap:10px; margin-top:18px; flex-wrap:nowrap;}
+  .card{width:min(176px,17vw); min-height:190px; gap:10px; border-radius:24px; padding:9px;}
+  .cicon{width:74px; height:74px; font-size:38px;}
+  .cnum{font-size:15px;}
+  .cname{font-size:clamp(15px,1.5vw,19px);}
 }
 @media (max-width:760px){
   .cards{flex-wrap:wrap;}
@@ -81,6 +83,11 @@ h1{font-size:clamp(30px,3.8vw,52px); font-weight:800; letter-spacing:-1.5px; tex
     <span class="cicon">💬</span>
     <span class="cnum">4차시</span>
     <span class="cname">AI와 이야기 나누기</span>
+  </a>
+  <a class="card" href="lesson5.html">
+    <span class="cicon">🎨</span>
+    <span class="cnum">5차시</span>
+    <span class="cname">AI에게 그림 부탁하기</span>
   </a>
 </div>
 </body>
